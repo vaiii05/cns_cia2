@@ -3,21 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CNS Lab — Secure Messenger</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<title>CNS Lab — SecureVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #07090f;
-  --surface: #0e1220;
-  --border:  #1c2640;
-  --accent:  #4fffb0;
-  --blue:    #4f9fff;
-  --red:     #ff5566;
-  --yellow:  #ffe566;
-  --dim:     #3a4f70;
-  --text:    #b8cce0;
-  --mono:    'IBM Plex Mono', monospace;
-  --sans:    'Syne', sans-serif;
+  --bg:      #080c14;
+  --panel:   #0d1425;
+  --border:  #1a2a4a;
+  --accent:  #00d4ff;
+  --purple:  #7c3aed;
+  --green:   #00ff88;
+  --red:     #ff4466;
+  --yellow:  #ffd700;
+  --text:    #c8d8f0;
+  --dim:     #5a7a9a;
+  --mono:    'Share Tech Mono', monospace;
+  --sans:    'Exo 2', sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,131 +28,178 @@ body {
   color: var(--text);
   font-family: var(--sans);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 16px 80px;
+  overflow-x: hidden;
 }
 
-/* subtle dot grid */
+/* animated grid */
 body::before {
   content: '';
   position: fixed; inset: 0;
-  background-image: radial-gradient(rgba(79,255,176,0.06) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
   pointer-events: none;
   z-index: 0;
 }
 
-.wrap { width: 100%; max-width: 560px; position: relative; z-index: 1; }
+/* glow orb */
+body::after {
+  content: '';
+  position: fixed;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
 
-/* ── header ── */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header ── */
 header {
-  text-align: center;
-  margin-bottom: 40px;
+  padding: 24px 0 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-header h1 {
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -1px;
-  color: #fff;
+
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
 }
-header h1 span { color: var(--accent); }
-header p {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--dim);
+.logo h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
   letter-spacing: 2px;
-  margin-top: 6px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.logo span {
+  font-size: 0.7rem;
+  color: var(--dim);
+  display: block;
+  letter-spacing: 3px;
   text-transform: uppercase;
 }
 
-/* ── step pipeline ── */
-.pipeline {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  margin-bottom: 36px;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-}
-.pipe-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  opacity: 0.35;
-  transition: opacity 0.3s;
-}
-.pipe-step.active  { opacity: 1; }
-.pipe-step.done    { opacity: 0.7; }
-.pipe-num {
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  border: 1px solid var(--dim);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem;
-  transition: all 0.3s;
-}
-.pipe-step.active .pipe-num {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
-  font-weight: 600;
-  box-shadow: 0 0 12px rgba(79,255,176,0.4);
-}
-.pipe-step.done .pipe-num {
-  background: rgba(79,255,176,0.15);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.pipe-label { color: var(--dim); letter-spacing: 1px; text-transform: uppercase; }
-.pipe-step.active .pipe-label { color: var(--text); }
-.pipe-arrow {
-  width: 32px; height: 1px;
-  background: var(--border);
-  margin: 0 4px;
-  margin-bottom: 16px;
-  flex-shrink: 0;
-  transition: background 0.3s;
-}
-.pipe-arrow.lit { background: var(--accent); }
+.header-right { display: flex; align-items: center; gap: 16px; }
 
-/* ── card ── */
+.status-bar {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 0.8rem;
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+#user-badge {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.2);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+#user-badge.show { display: flex; }
+#user-badge .uname { color: var(--accent); }
+#logout-btn {
+  background: none;
+  border: 1px solid rgba(255,68,102,0.3);
+  color: var(--red);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  padding: 2px 10px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+#logout-btn:hover { background: rgba(255,68,102,0.1); }
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-top: 28px;
+}
+.tab {
+  padding: 12px 22px;
+  background: none;
+  border: none;
+  color: var(--dim);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.2s;
+}
+.tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+.tab.active { color: var(--accent); }
+.tab.active::after { transform: scaleX(1); }
+.tab:hover:not(.active) { color: var(--text); }
+
+/* ── Panels ── */
+.panel { display: none; padding: 32px 0; }
+.panel.active { display: block; }
+
+/* ── Card ── */
 .card {
-  background: var(--surface);
+  background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 16px;
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
   position: relative;
   overflow: hidden;
-  transition: border-color 0.3s;
 }
-.card::after {
+.card::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--accent), var(--blue), transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s;
+  background: linear-gradient(90deg, var(--accent), var(--purple), transparent);
 }
-.card.active-card::after { opacity: 1; }
-.card.active-card { border-color: rgba(79,255,176,0.2); }
 
 .card-head {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 14px;
+  margin-bottom: 22px;
 }
 .card-icon {
   width: 36px; height: 36px;
   border-radius: 8px;
-  background: rgba(79,255,176,0.08);
-  border: 1px solid rgba(79,255,176,0.15);
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.15);
   display: flex; align-items: center; justify-content: center;
   font-size: 1rem;
   flex-shrink: 0;
@@ -161,15 +209,29 @@ header p {
   font-weight: 600;
   color: #fff;
 }
-.card-subtitle {
+.card-sub {
   font-family: var(--mono);
   font-size: 0.68rem;
   color: var(--dim);
   letter-spacing: 1px;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
-/* ── form elements ── */
+.algo-tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.2);
+  color: var(--accent);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* ── Form ── */
 label {
   display: block;
   font-family: var(--mono);
@@ -184,7 +246,7 @@ input, textarea {
   width: 100%;
   background: rgba(0,0,0,0.4);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text);
   font-family: var(--mono);
   font-size: 0.88rem;
@@ -194,739 +256,713 @@ input, textarea {
   margin-bottom: 14px;
 }
 input:focus, textarea:focus {
-  border-color: rgba(79,255,176,0.4);
-  box-shadow: 0 0 0 3px rgba(79,255,176,0.06);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(0,212,255,0.1);
 }
-textarea { resize: none; min-height: 80px; }
+textarea { resize: vertical; min-height: 80px; }
 
-.row { display: flex; gap: 10px; }
-.row input { margin-bottom: 0; }
-
-/* ── buttons ── */
+/* ── Buttons ── */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  width: 100%;
-  padding: 12px;
+  padding: 11px 22px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-family: var(--mono);
   font-size: 0.82rem;
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s;
-  margin-top: 4px;
 }
+.btn-full { width: 100%; }
 .btn-primary {
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), #0099bb);
   color: #000;
-  font-weight: 600;
+  font-weight: 700;
 }
-.btn-primary:hover { box-shadow: 0 0 20px rgba(79,255,176,0.3); transform: translateY(-1px); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,212,255,0.3); }
 .btn-ghost {
   background: transparent;
   color: var(--dim);
   border: 1px solid var(--border);
 }
 .btn-ghost:hover { border-color: var(--dim); color: var(--text); }
-.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none !important; }
 
-/* ── info rows (hash display) ── */
+/* ── Step pipeline ── */
+.pipeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 28px;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+}
+.pipe-step {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+  opacity: 0.35; transition: opacity 0.3s;
+}
+.pipe-step.active { opacity: 1; }
+.pipe-step.done   { opacity: 0.65; }
+.pipe-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; transition: all 0.3s;
+}
+.pipe-step.active .pipe-num {
+  background: var(--accent); border-color: var(--accent);
+  color: #000; font-weight: 700;
+  box-shadow: 0 0 12px rgba(0,212,255,0.4);
+}
+.pipe-step.done .pipe-num {
+  background: rgba(0,212,255,0.12); border-color: var(--accent); color: var(--accent);
+}
+.pipe-label { color: var(--dim); letter-spacing: 1px; text-transform: uppercase; font-size: 0.65rem; }
+.pipe-step.active .pipe-label, .pipe-step.done .pipe-label { color: var(--text); }
+.pipe-arrow {
+  width: 36px; height: 1px;
+  background: var(--border);
+  margin: 0 2px 16px;
+  flex-shrink: 0; transition: background 0.3s;
+}
+.pipe-arrow.lit { background: var(--accent); }
+
+/* ── Info rows ── */
 .info-block {
   background: rgba(0,0,0,0.3);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 14px 16px;
-  margin-top: 14px;
-  display: none;
+  margin-top: 14px; display: none;
 }
 .info-block.show { display: block; }
 .info-row {
-  display: flex;
-  gap: 12px;
+  display: flex; gap: 12px;
   padding: 7px 0;
-  border-bottom: 1px solid rgba(28,38,64,0.7);
-  font-family: var(--mono);
-  font-size: 0.75rem;
+  border-bottom: 1px solid rgba(26,42,74,0.6);
+  font-family: var(--mono); font-size: 0.75rem;
 }
 .info-row:last-child { border-bottom: none; padding-bottom: 0; }
-.info-key { color: var(--dim); min-width: 110px; flex-shrink: 0; }
+.info-key { color: var(--dim); min-width: 120px; flex-shrink: 0; }
 .info-val { color: var(--text); word-break: break-all; line-height: 1.5; }
-.info-val.green { color: var(--accent); }
+.info-val.green  { color: var(--green); }
 .info-val.yellow { color: var(--yellow); }
-.info-val.blue { color: var(--blue); }
+.info-val.blue   { color: var(--accent); }
 
-/* ── algo badge ── */
-.algo-tag {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: rgba(79,255,176,0.08);
-  border: 1px solid rgba(79,255,176,0.15);
-  color: var(--accent);
-  margin-left: 8px;
-}
-
-/* ── status / alert ── */
-.status {
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  padding: 10px 14px;
-  border-radius: 6px;
-  margin-top: 12px;
-  display: none;
-  align-items: center;
-  gap: 8px;
-}
-.status.show { display: flex; }
-.status.ok  { background: rgba(79,255,176,0.07); border: 1px solid rgba(79,255,176,0.2); color: var(--accent); }
-.status.err { background: rgba(255,85,102,0.07); border: 1px solid rgba(255,85,102,0.2); color: var(--red); }
-
-/* ── logged-in banner ── */
-#banner {
-  display: none;
-  background: rgba(79,255,176,0.06);
-  border: 1px solid rgba(79,255,176,0.15);
-  border-radius: 10px;
-  padding: 12px 18px;
-  margin-bottom: 16px;
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  align-items: center;
-  justify-content: space-between;
-}
-#banner.show { display: flex; }
-#banner .who { color: var(--accent); }
-#banner button {
-  background: none; border: none;
-  color: var(--red); cursor: pointer;
-  font-family: var(--mono); font-size: 0.75rem;
-  border: 1px solid rgba(255,85,102,0.25);
-  padding: 3px 10px; border-radius: 4px;
-  transition: background 0.2s;
-}
-#banner button:hover { background: rgba(255,85,102,0.1); }
-
-/* ── output ciphertext ── */
-.cipher-out {
-  background: rgba(0,0,0,0.4);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 14px;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  word-break: break-all;
-  color: var(--blue);
-  margin-top: 4px;
-  min-height: 48px;
-  line-height: 1.6;
-}
-.cipher-out.plain { color: var(--yellow); }
-
-.out-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* ── Output boxes ── */
+.out-header {
+  display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 6px;
 }
 .out-label {
   font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--dim);
+  font-size: 0.65rem; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--dim);
 }
 .copy-btn {
   background: none;
   border: 1px solid var(--border);
   color: var(--dim);
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  padding: 2px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
+  font-family: var(--mono); font-size: 0.65rem;
+  padding: 2px 8px; border-radius: 4px;
+  cursor: pointer; transition: all 0.2s;
 }
 .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ── locked overlay ── */
+.output-box {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: var(--mono); font-size: 0.8rem;
+  word-break: break-all; line-height: 1.6;
+  color: var(--accent);
+  min-height: 48px; margin-bottom: 12px;
+}
+.output-box.yellow { color: var(--yellow); }
+
+/* ── Status ── */
+.status {
+  font-family: var(--mono); font-size: 0.78rem;
+  padding: 10px 14px; border-radius: 6px;
+  margin-top: 10px; display: none; align-items: center; gap: 8px;
+}
+.status.show { display: flex; }
+.status.ok  { background: rgba(0,255,136,0.07); border: 1px solid rgba(0,255,136,0.2); color: var(--green); }
+.status.err { background: rgba(255,68,102,0.07); border: 1px solid rgba(255,68,102,0.2); color: var(--red); }
+
+/* ── Locked overlay ── */
 .locked {
   position: absolute; inset: 0;
-  background: rgba(7,9,15,0.88);
-  border-radius: 16px;
+  background: rgba(8,12,20,0.88);
+  border-radius: 12px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 10px;
-  backdrop-filter: blur(3px);
-  z-index: 5;
-  transition: opacity 0.3s;
+  gap: 10px; backdrop-filter: blur(2px); z-index: 5;
 }
 .locked .lock-ico { font-size: 2rem; }
 .locked p { font-family: var(--mono); font-size: 0.78rem; color: var(--dim); }
 
-/* ── flowchart section ── */
-.section-title {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--dim);
-  text-align: center;
-  margin: 40px 0 16px;
-}
-
-.flowchart {
-  background: var(--surface);
+/* ── Code blocks ── */
+.code-block {
+  background: rgba(0,0,0,0.5);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 28px 20px;
-  overflow-x: auto;
+  border-left: 3px solid var(--purple);
+  border-radius: 0 6px 6px 0;
+  padding: 16px; font-family: var(--mono);
+  font-size: 0.78rem; line-height: 1.8;
+  overflow-x: auto; margin: 12px 0; color: #a8c0e0;
+}
+.kw { color: #a78bfa; }
+.fn { color: var(--accent); }
+.st { color: var(--green); }
+.cm { color: var(--dim); }
+.yw { color: var(--yellow); }
+
+/* ── Flowchart tab ── */
+.flow-wrap {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px; overflow-x: auto;
 }
 
-/* ── footer ── */
-footer {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  color: var(--dim);
-  text-align: center;
-  margin-top: 40px;
-  letter-spacing: 1px;
-}
-
-/* animations */
-@keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
-.card { animation: fadeIn 0.4s ease both; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+.card { animation: fadeIn 0.35s ease both; }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="container">
 
   <!-- Header -->
   <header>
-    <h1>Secure<span>Vault</span></h1>
-    <p>CNS Lab · SHA-256 + AES-128 · Client-Server Auth</p>
+    <div class="logo">
+      <div class="logo-icon">🔐</div>
+      <div>
+        <h1>SecureVault</h1>
+        <span>CNS Lab · SHA-256 + AES-128 · Client-Server</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="user-badge">
+        <span>👤</span>
+        <span class="uname" id="who-name">—</span>
+        <button id="logout-btn" onclick="doLogout()">LOGOUT</button>
+      </div>
+      <div class="status-bar">
+        <div class="status-dot"></div>
+        <span>SERVER ONLINE</span>
+      </div>
+    </div>
   </header>
 
-  <!-- Step pipeline -->
-  <div class="pipeline">
-    <div class="pipe-step active" id="ps1">
-      <div class="pipe-num">1</div>
-      <div class="pipe-label">Register</div>
-    </div>
-    <div class="pipe-arrow" id="pa1"></div>
-    <div class="pipe-step" id="ps2">
-      <div class="pipe-num">2</div>
-      <div class="pipe-label">Login</div>
-    </div>
-    <div class="pipe-arrow" id="pa2"></div>
-    <div class="pipe-step" id="ps3">
-      <div class="pipe-num">3</div>
-      <div class="pipe-label">Encrypt</div>
-    </div>
-    <div class="pipe-arrow" id="pa3"></div>
-    <div class="pipe-step" id="ps4">
-      <div class="pipe-num">4</div>
-      <div class="pipe-label">Decrypt</div>
-    </div>
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('app',  this)">🔑 Application</button>
+    <button class="tab"        onclick="switchTab('flow', this)">📊 Flowchart</button>
+    <button class="tab"        onclick="switchTab('code', this)">📖 Code Explained</button>
   </div>
 
-  <!-- Logged-in banner -->
-  <div id="banner">
-    <span>🟢 Logged in as <span class="who" id="who-name">—</span></span>
-    <button onclick="doLogout()">Logout</button>
-  </div>
+  <!-- ══════════════════════════
+       PANEL: APPLICATION
+  ══════════════════════════ -->
+  <div class="panel active" id="panel-app">
 
-  <!-- ── STEP 1: REGISTER ── -->
-  <div class="card active-card" id="card-register">
-    <div class="card-head">
-      <div class="card-icon">📝</div>
-      <div>
-        <div class="card-title">Register <span class="algo-tag">SHA-256</span></div>
-        <div class="card-subtitle">Password is hashed — never stored as plain text</div>
+    <!-- Pipeline -->
+    <div class="pipeline">
+      <div class="pipe-step active" id="ps1"><div class="pipe-num">1</div><div class="pipe-label">Register</div></div>
+      <div class="pipe-arrow" id="pa1"></div>
+      <div class="pipe-step" id="ps2"><div class="pipe-num">2</div><div class="pipe-label">Login</div></div>
+      <div class="pipe-arrow" id="pa2"></div>
+      <div class="pipe-step" id="ps3"><div class="pipe-num">3</div><div class="pipe-label">Encrypt</div></div>
+      <div class="pipe-arrow" id="pa3"></div>
+      <div class="pipe-step" id="ps4"><div class="pipe-num">4</div><div class="pipe-label">Decrypt</div></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon">📝</div>
+        <div>
+          <div class="card-title">Register <span class="algo-tag">SHA-256</span></div>
+          <div class="card-sub">Password is hashed — never stored as plain text</div>
+        </div>
+      </div>
+      <label>Username</label>
+      <input type="text" id="r-user" placeholder="e.g. alice" autocomplete="off">
+      <label>Password</label>
+      <input type="password" id="r-pass" placeholder="choose a password">
+      <button class="btn btn-primary btn-full" onclick="doRegister()">CREATE ACCOUNT →</button>
+      <div class="status" id="r-status"></div>
+      <div class="info-block" id="r-info">
+        <div class="info-row">
+          <span class="info-key">password input</span>
+          <span class="info-val yellow" id="ri-plain">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">SHA-256 hash</span>
+          <span class="info-val green" id="ri-hash">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">stored in DB</span>
+          <span class="info-val blue">hash only ✓ — plain text discarded</span>
+        </div>
       </div>
     </div>
 
-    <label>Username</label>
-    <input type="text" id="r-user" placeholder="e.g. alice" autocomplete="off">
-    <label>Password</label>
-    <input type="password" id="r-pass" placeholder="choose a password">
-
-    <button class="btn btn-primary" onclick="doRegister()">Create Account →</button>
-
-    <div class="status" id="r-status"></div>
-
-    <!-- Shows hash after register -->
-    <div class="info-block" id="r-info">
-      <div class="info-row">
-        <span class="info-key">password input</span>
-        <span class="info-val yellow" id="ri-plain">—</span>
+    <!-- LOGIN -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon">🔑</div>
+        <div>
+          <div class="card-title">Login <span class="algo-tag">SHA-256 compare</span></div>
+          <div class="card-sub">Entered password is hashed → compared to stored hash</div>
+        </div>
       </div>
-      <div class="info-row">
-        <span class="info-key">SHA-256 hash</span>
-        <span class="info-val green" id="ri-hash">—</span>
-      </div>
-      <div class="info-row">
-        <span class="info-key">stored in DB</span>
-        <span class="info-val blue">hash only ✓ (plain text discarded)</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── STEP 2: LOGIN ── -->
-  <div class="card" id="card-login">
-    <div class="card-head">
-      <div class="card-icon">🔑</div>
-      <div>
-        <div class="card-title">Login <span class="algo-tag">SHA-256 compare</span></div>
-        <div class="card-subtitle">Entered password is hashed → compared to stored hash</div>
+      <label>Username</label>
+      <input type="text" id="l-user" placeholder="e.g. alice" autocomplete="off">
+      <label>Password</label>
+      <input type="password" id="l-pass" placeholder="your password">
+      <button class="btn btn-primary btn-full" onclick="doLogin()">AUTHENTICATE →</button>
+      <div class="status" id="l-status"></div>
+      <div class="info-block" id="l-info">
+        <div class="info-row">
+          <span class="info-key">entered hash</span>
+          <span class="info-val green" id="li-entered">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">stored hash</span>
+          <span class="info-val green" id="li-stored">—</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">match?</span>
+          <span class="info-val green">✓ identical → session created → access granted</span>
+        </div>
       </div>
     </div>
 
-    <label>Username</label>
-    <input type="text" id="l-user" placeholder="e.g. alice" autocomplete="off">
-    <label>Password</label>
-    <input type="password" id="l-pass" placeholder="your password">
-
-    <button class="btn btn-primary" onclick="doLogin()">Authenticate →</button>
-
-    <div class="status" id="l-status"></div>
-
-    <div class="info-block" id="l-info">
-      <div class="info-row">
-        <span class="info-key">entered hash</span>
-        <span class="info-val green" id="li-entered">—</span>
+    <!-- ENCRYPT -->
+    <div class="card" style="position:relative;">
+      <div class="locked" id="enc-lock">
+        <div class="lock-ico">🔒</div>
+        <p>Login first to use AES encryption</p>
       </div>
-      <div class="info-row">
-        <span class="info-key">stored hash</span>
-        <span class="info-val green" id="li-stored">—</span>
+      <div class="card-head">
+        <div class="card-icon">🔐</div>
+        <div>
+          <div class="card-title">Encrypt Message <span class="algo-tag">AES-128 CBC</span></div>
+          <div class="card-sub">Available only to authenticated users — Practical 5</div>
+        </div>
       </div>
-      <div class="info-row">
-        <span class="info-key">match?</span>
-        <span class="info-val green">✓ identical → session created → access granted</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── STEP 3: ENCRYPT ── -->
-  <div class="card" id="card-enc" style="position:relative;">
-    <div class="locked" id="enc-lock">
-      <div class="lock-ico">🔒</div>
-      <p>Login first to use encryption</p>
-    </div>
-
-    <div class="card-head">
-      <div class="card-icon">🔐</div>
-      <div>
-        <div class="card-title">Encrypt Message <span class="algo-tag">AES-128 CBC</span></div>
-        <div class="card-subtitle">Available only to authenticated users</div>
+      <label>Plaintext Message</label>
+      <textarea id="e-msg" placeholder="Type your secret message here…"></textarea>
+      <label>AES Key</label>
+      <input type="text" id="e-key" placeholder="e.g. mysecretkey" autocomplete="off">
+      <button class="btn btn-primary btn-full" onclick="doEncrypt()">ENCRYPT WITH AES →</button>
+      <div class="status" id="e-status"></div>
+      <div id="e-out" style="display:none;margin-top:16px;">
+        <div class="out-header">
+          <span class="out-label">Ciphertext (Base64)</span>
+          <button class="copy-btn" onclick="copyEl('e-ct')">COPY</button>
+        </div>
+        <div class="output-box" id="e-ct">—</div>
+        <div class="out-header">
+          <span class="out-label">IV — Initialization Vector</span>
+          <button class="copy-btn" onclick="copyEl('e-iv')">COPY</button>
+        </div>
+        <div class="output-box" id="e-iv">—</div>
       </div>
     </div>
 
-    <label>Message (plaintext)</label>
-    <textarea id="e-msg" placeholder="Type your secret message here…"></textarea>
-
-    <label>AES Key</label>
-    <input type="text" id="e-key" placeholder="e.g. mysecretkey" autocomplete="off">
-
-    <button class="btn btn-primary" onclick="doEncrypt()">Encrypt with AES →</button>
-
-    <div class="status" id="e-status"></div>
-
-    <div id="e-out" style="display:none; margin-top:16px;">
-      <div class="out-row">
-        <span class="out-label">Ciphertext (Base64)</span>
-        <button class="copy-btn" onclick="copyText('e-ct')">copy</button>
+    <!-- DECRYPT -->
+    <div class="card" style="position:relative;">
+      <div class="locked" id="dec-lock">
+        <div class="lock-ico">🔒</div>
+        <p>Login first to use AES decryption</p>
       </div>
-      <div class="cipher-out" id="e-ct">—</div>
-
-      <div class="out-row" style="margin-top:12px;">
-        <span class="out-label">IV — Initialization Vector</span>
-        <button class="copy-btn" onclick="copyText('e-iv')">copy</button>
+      <div class="card-head">
+        <div class="card-icon">🔓</div>
+        <div>
+          <div class="card-title">Decrypt Message <span class="algo-tag">AES-128 CBC</span></div>
+          <div class="card-sub">Provide ciphertext + IV + same key to recover plaintext</div>
+        </div>
       </div>
-      <div class="cipher-out" id="e-iv">—</div>
-    </div>
-  </div>
-
-  <!-- ── STEP 4: DECRYPT ── -->
-  <div class="card" id="card-dec" style="position:relative;">
-    <div class="locked" id="dec-lock">
-      <div class="lock-ico">🔒</div>
-      <p>Login first to use decryption</p>
-    </div>
-
-    <div class="card-head">
-      <div class="card-icon">🔓</div>
-      <div>
-        <div class="card-title">Decrypt Message <span class="algo-tag">AES-128 CBC</span></div>
-        <div class="card-subtitle">Paste ciphertext + IV + same key to recover plaintext</div>
+      <button class="btn btn-ghost btn-full" onclick="autoFill()" style="margin-bottom:14px;">⬆ AUTO-FILL FROM LAST ENCRYPT</button>
+      <label>Ciphertext (Base64)</label>
+      <textarea id="d-ct" placeholder="Paste ciphertext here…" style="min-height:60px;font-size:0.75rem;"></textarea>
+      <label>IV (Base64)</label>
+      <input type="text" id="d-iv" placeholder="Paste IV here…">
+      <label>AES Key</label>
+      <input type="text" id="d-key" placeholder="same key used for encryption">
+      <button class="btn btn-primary btn-full" onclick="doDecrypt()">DECRYPT →</button>
+      <div class="status" id="d-status"></div>
+      <div id="d-out" style="display:none;margin-top:16px;">
+        <div class="out-header">
+          <span class="out-label">Recovered Plaintext</span>
+        </div>
+        <div class="output-box yellow" id="d-pt">—</div>
       </div>
     </div>
 
-    <button class="btn btn-ghost" id="autofill-btn" onclick="autoFill()" style="margin-bottom:14px;">⬆ Auto-fill from last encrypt</button>
+  </div><!-- /panel-app -->
 
-    <label>Ciphertext (Base64)</label>
-    <textarea id="d-ct" placeholder="Paste ciphertext here…" style="min-height:60px;"></textarea>
 
-    <label>IV (Base64)</label>
-    <input type="text" id="d-iv" placeholder="Paste IV here…">
+  <!-- ══════════════════════════
+       PANEL: FLOWCHART
+  ══════════════════════════ -->
+  <div class="panel" id="panel-flow">
+    <div class="flow-wrap">
+      <svg viewBox="0 0 900 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <defs>
+          <marker id="arr"   markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00d4ff"/></marker>
+          <marker id="arr-g" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00ff88"/></marker>
+          <marker id="arr-r" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#ff4466"/></marker>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <style>
+          .fc  { font-family:'Share Tech Mono',monospace; }
+          .n   { fill:#0d1425; stroke:#1a2a4a; stroke-width:1.5; }
+          .ng  { fill:#061a10; stroke:#00ff88; stroke-width:1.5; }
+          .ny  { fill:#0d0a00; stroke:#ffd700; stroke-width:1.5; }
+          .nb  { fill:#040f1a; stroke:#00d4ff; stroke-width:1.5; }
+          .np  { fill:#0d0a1f; stroke:#7c3aed; stroke-width:2; }
+          .ne  { fill:#1a0808; stroke:#ff4466; stroke-width:1.5; }
+          .tw  { fill:#c8d8f0; font-size:11px; text-anchor:middle; dominant-baseline:central; }
+          .tg  { fill:#00ff88; font-size:11px; text-anchor:middle; dominant-baseline:central; }
+          .ty  { fill:#ffd700; font-size:11px; text-anchor:middle; dominant-baseline:central; }
+          .tb  { fill:#00d4ff; font-size:11px; text-anchor:middle; dominant-baseline:central; }
+          .tp  { fill:#a78bfa; font-size:11px; text-anchor:middle; dominant-baseline:central; }
+          .tr  { fill:#ff4466; font-size:11px; text-anchor:middle; dominant-baseline:central; }
+          .td  { fill:#5a7a9a; font-size:9.5px; text-anchor:middle; dominant-baseline:central; }
+          .la  { fill:#5a7a9a; font-family:'Share Tech Mono',monospace; font-size:9px; }
+          .ln  { stroke:#00d4ff; stroke-width:1.5; fill:none; marker-end:url(#arr); }
+          .lng { stroke:#00ff88; stroke-width:1.5; fill:none; marker-end:url(#arr-g); }
+          .lnr { stroke:#ff4466; stroke-width:1.5; fill:none; marker-end:url(#arr-r); }
+          .dv  { stroke:#1a2a4a; stroke-width:1; stroke-dasharray:5,4; fill:none; }
+        </style>
 
-    <label>AES Key</label>
-    <input type="text" id="d-key" placeholder="same key used for encryption">
+        <!-- ═══ LEFT: REGISTER ═══ -->
+        <text x="205" y="18" class="fc td" style="letter-spacing:3px;">REGISTRATION</text>
 
-    <button class="btn btn-primary" onclick="doDecrypt()">Decrypt →</button>
+        <ellipse cx="205" cy="46" rx="82" ry="20" class="nb" filter="url(#glow)"/>
+        <text x="205" y="46" class="fc tb">CLIENT (Browser)</text>
 
-    <div class="status" id="d-status"></div>
+        <line x1="205" y1="66"  x2="205" y2="88"  class="ln"/>
+        <rect x="105" y="88"  width="200" height="38" rx="7" class="n"/>
+        <text x="205" y="101" class="fc tw">Enter username</text>
+        <text x="205" y="116" class="fc tw">+ password</text>
 
-    <div id="d-out" style="display:none; margin-top:16px;">
-      <div class="out-row">
-        <span class="out-label">Recovered Plaintext</span>
-      </div>
-      <div class="cipher-out plain" id="d-pt">—</div>
+        <line x1="205" y1="126" x2="205" y2="148" class="ln"/>
+        <rect x="85"  y="148" width="240" height="42" rx="7" class="ny"/>
+        <text x="205" y="163" class="fc ty">SHA-256( password )</text>
+        <text x="205" y="180" class="fc td">Practical 9 — Message Digest</text>
+
+        <line x1="205" y1="190" x2="205" y2="212" class="ln"/>
+        <rect x="85"  y="212" width="240" height="42" rx="7" class="ng"/>
+        <text x="205" y="227" class="fc tg">Store { username: hash }</text>
+        <text x="205" y="244" class="fc td">plain password discarded ✓</text>
+
+        <line x1="205" y1="254" x2="205" y2="276" class="lng"/>
+        <rect x="105" y="276" width="200" height="34" rx="7" class="ng"/>
+        <text x="205" y="293" class="fc tg">✓ Registration Successful</text>
+
+        <!-- ═══ RIGHT: LOGIN + ENCRYPT ═══ -->
+        <text x="675" y="18" class="fc td" style="letter-spacing:3px;">LOGIN + ENCRYPT</text>
+
+        <ellipse cx="675" cy="46" rx="82" ry="20" class="nb" filter="url(#glow)"/>
+        <text x="675" y="46" class="fc tb">CLIENT (Browser)</text>
+
+        <line x1="675" y1="66"  x2="675" y2="88"  class="ln"/>
+        <rect x="575" y="88"  width="200" height="38" rx="7" class="n"/>
+        <text x="675" y="101" class="fc tw">Enter username</text>
+        <text x="675" y="116" class="fc tw">+ password</text>
+
+        <line x1="675" y1="126" x2="675" y2="148" class="ln"/>
+        <rect x="550" y="148" width="250" height="42" rx="7" class="ny"/>
+        <text x="675" y="163" class="fc ty">SHA-256( entered_pass )</text>
+        <text x="675" y="180" class="fc td">Practical 9 — same algorithm</text>
+
+        <line x1="675" y1="190" x2="675" y2="222" class="ln"/>
+
+        <!-- diamond -->
+        <polygon points="675,222 775,258 675,294 575,258" class="ny" filter="url(#glow)"/>
+        <text x="675" y="258" class="fc ty">Hash == stored?</text>
+
+        <!-- YES -->
+        <line x1="675" y1="294" x2="675" y2="316" class="lng"/>
+        <text x="686" y="307" class="la" fill="#00ff88">YES</text>
+        <rect x="550" y="316" width="250" height="42" rx="7" class="ng"/>
+        <text x="675" y="331" class="fc tg">Session Created ✓</text>
+        <text x="675" y="348" class="fc td">Authentication granted</text>
+
+        <!-- NO -->
+        <line x1="775" y1="258" x2="848" y2="258" class="lnr"/>
+        <text x="808" y="250" class="la" fill="#ff4466">NO</text>
+        <rect x="808" y="238" width="80" height="38" rx="7" class="ne"/>
+        <text x="848" y="252" class="fc tr">401</text>
+        <text x="848" y="268" class="fc td">Denied</text>
+
+        <line x1="675" y1="358" x2="675" y2="388" class="ln"/>
+
+        <!-- divider -->
+        <line x1="470" y1="382" x2="870" y2="382" class="dv"/>
+        <text x="670" y="397" class="fc td" style="letter-spacing:2px;">SESSION REQUIRED</text>
+
+        <line x1="675" y1="406" x2="675" y2="428" class="ln"/>
+
+        <!-- AES Encrypt -->
+        <rect x="520" y="428" width="310" height="56" rx="7" class="np"/>
+        <text x="675" y="446" class="fc tp">AES-128 CBC Encrypt</text>
+        <text x="675" y="462" class="fc td">key = SHA256(key_str)[:16]  |  IV = random(16)</text>
+        <text x="675" y="477" class="fc td">Practical 5 — AES Algorithm</text>
+
+        <line x1="675" y1="484" x2="675" y2="506" class="ln"/>
+        <rect x="555" y="506" width="240" height="38" rx="7" class="n"/>
+        <text x="675" y="519" class="fc tw">Return ciphertext (Base64)</text>
+        <text x="675" y="534" class="fc td">+ IV (Base64)</text>
+
+        <line x1="675" y1="544" x2="675" y2="566" class="ln"/>
+
+        <!-- AES Decrypt -->
+        <rect x="520" y="566" width="310" height="56" rx="7" class="np"/>
+        <text x="675" y="584" class="fc tp">AES-128 CBC Decrypt</text>
+        <text x="675" y="600" class="fc td">same key + IV → unpad → plaintext</text>
+        <text x="675" y="616" class="fc td">Practical 5 — AES Algorithm</text>
+
+        <line x1="675" y1="622" x2="675" y2="644" class="lng"/>
+        <rect x="555" y="644" width="240" height="38" rx="7" class="ng"/>
+        <text x="675" y="657" class="fc tg">✓ Original plaintext recovered</text>
+        <text x="675" y="672" class="fc td">End-to-end secure message</text>
+
+        <!-- vertical divider -->
+        <line x1="430" y1="8" x2="430" y2="720" class="dv"/>
+
+        <!-- bottom labels -->
+        <text x="205" y="750" class="fc td" style="text-anchor:middle;letter-spacing:2px;">SECURITY — SHA-256 (Practical 9)</text>
+        <text x="675" y="750" class="fc td" style="text-anchor:middle;letter-spacing:2px;">CRYPTO — AES-128 CBC (Practical 5)</text>
+      </svg>
     </div>
-  </div>
+  </div><!-- /panel-flow -->
 
-  <!-- ── FLOWCHART ── -->
-  <div class="section-title">Application Flowchart</div>
-  <div class="flowchart">
-    <svg viewBox="0 0 520 860" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-      <defs>
-        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0,8 3,0 6" fill="#4fffb0"/>
-        </marker>
-        <marker id="arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0,8 3,0 6" fill="#ff5566"/>
-        </marker>
-      </defs>
-      <style>
-        .fc { font-family:'IBM Plex Mono',monospace; }
-        .node { fill:#0e1220; stroke:#1c2640; stroke-width:1.5; }
-        .node-acc { fill:#061a10; stroke:#4fffb0; stroke-width:1.5; }
-        .node-warn { fill:#1a100a; stroke:#ffe566; stroke-width:1.5; }
-        .node-err { fill:#1a080a; stroke:#ff5566; stroke-width:1.5; }
-        .node-blue { fill:#060f1a; stroke:#4f9fff; stroke-width:1.5; }
-        .t-white { fill:#fff; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-        .t-green { fill:#4fffb0; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-        .t-dim { fill:#3a4f70; font-size:9.5px; text-anchor:middle; dominant-baseline:central; }
-        .t-yellow { fill:#ffe566; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-        .t-blue { fill:#4f9fff; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-        .t-red { fill:#ff5566; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-        .ln { stroke:#4fffb0; stroke-width:1.5; fill:none; marker-end:url(#arr); }
-        .ln-r { stroke:#ff5566; stroke-width:1.5; fill:none; marker-end:url(#arr-r); }
-        .lb { fill:#3a4f70; font-family:'IBM Plex Mono',monospace; font-size:9px; }
-      </style>
 
-      <!-- CLIENT -->
-      <ellipse cx="260" cy="30" rx="90" ry="20" class="node-acc"/>
-      <text x="260" y="30" class="fc t-green">CLIENT (Browser)</text>
+  <!-- ══════════════════════════
+       PANEL: CODE EXPLAINED
+  ══════════════════════════ -->
+  <div class="panel" id="panel-code">
 
-      <line x1="260" y1="50" x2="260" y2="72" class="ln"/>
-
-      <!-- Register box -->
-      <rect x="150" y="72" width="220" height="38" rx="7" class="node"/>
-      <text x="260" y="87" class="fc t-white">Enter username + password</text>
-      <text x="260" y="101" class="fc t-dim">POST /api/register →</text>
-
-      <line x1="260" y1="110" x2="260" y2="132" class="ln"/>
-
-      <!-- SHA-256 box -->
-      <rect x="130" y="132" width="260" height="42" rx="7" class="node-warn"/>
-      <text x="260" y="147" class="fc t-yellow">SHA-256( password )</text>
-      <text x="260" y="163" class="fc t-dim">Practical 9 — Message Digest</text>
-
-      <line x1="260" y1="174" x2="260" y2="196" class="ln"/>
-
-      <!-- Store -->
-      <rect x="150" y="196" width="220" height="38" rx="7" class="node-acc"/>
-      <text x="260" y="211" class="fc t-green">Store { username: hash }</text>
-      <text x="260" y="226" class="fc t-dim">plain password discarded ✓</text>
-
-      <!-- ── divider ── -->
-      <line x1="80" y1="255" x2="440" y2="255" stroke="#1c2640" stroke-dasharray="4,3" stroke-width="1"/>
-      <text x="260" y="268" class="fc t-dim" style="text-anchor:middle;">LOGIN</text>
-
-      <line x1="260" y1="278" x2="260" y2="300" class="ln"/>
-
-      <!-- Enter creds -->
-      <rect x="150" y="300" width="220" height="38" rx="7" class="node"/>
-      <text x="260" y="315" class="fc t-white">Enter username + password</text>
-      <text x="260" y="330" class="fc t-dim">POST /api/login →</text>
-
-      <line x1="260" y1="338" x2="260" y2="360" class="ln"/>
-
-      <!-- Hash entered -->
-      <rect x="130" y="360" width="260" height="42" rx="7" class="node-warn"/>
-      <text x="260" y="375" class="fc t-yellow">SHA-256( entered_password )</text>
-      <text x="260" y="391" class="fc t-dim">Practical 9 — same algorithm</text>
-
-      <line x1="260" y1="402" x2="260" y2="424" class="ln"/>
-
-      <!-- Diamond -->
-      <polygon points="260,424 360,454 260,484 160,454" class="node-warn"/>
-      <text x="260" y="454" class="fc t-yellow">Hash == stored?</text>
-
-      <!-- YES -->
-      <line x1="260" y1="484" x2="260" y2="506" class="ln"/>
-      <text x="270" y="497" class="fc lb" fill="#4fffb0">YES</text>
-      <rect x="150" y="506" width="220" height="38" rx="7" class="node-acc"/>
-      <text x="260" y="521" class="fc t-green">Session Created ✓</text>
-      <text x="260" y="536" class="fc t-dim">Authentication granted</text>
-
-      <!-- NO -->
-      <line x1="360" y1="454" x2="430" y2="454" class="ln-r"/>
-      <text x="392" y="446" class="fc lb" fill="#ff5566">NO</text>
-      <rect x="390" y="434" width="100" height="38" rx="7" class="node-err"/>
-      <text x="440" y="449" class="fc t-red">401</text>
-      <text x="440" y="463" class="fc t-dim">Denied</text>
-
-      <!-- ── divider ── -->
-      <line x1="80" y1="565" x2="440" y2="565" stroke="#1c2640" stroke-dasharray="4,3" stroke-width="1"/>
-      <text x="260" y="578" class="fc t-dim" style="text-anchor:middle;">ENCRYPT / DECRYPT (session required)</text>
-
-      <line x1="260" y1="588" x2="260" y2="610" class="ln"/>
-
-      <!-- AES encrypt -->
-      <rect x="120" y="610" width="280" height="52" rx="7" class="node-blue"/>
-      <text x="260" y="628" class="fc t-blue">AES-128 CBC Encrypt</text>
-      <text x="260" y="643" class="fc t-dim">key = SHA256(key_str)[:16]  |  IV = random(16)</text>
-      <text x="260" y="656" class="fc t-dim">Practical 5 — AES Algorithm</text>
-
-      <line x1="260" y1="662" x2="260" y2="684" class="ln"/>
-
-      <!-- Output -->
-      <rect x="150" y="684" width="220" height="38" rx="7" class="node"/>
-      <text x="260" y="699" class="fc t-white">Return ciphertext + IV</text>
-      <text x="260" y="714" class="fc t-dim">(Base64 encoded)</text>
-
-      <line x1="260" y1="722" x2="260" y2="744" class="ln"/>
-
-      <!-- AES decrypt -->
-      <rect x="120" y="744" width="280" height="52" rx="7" class="node-blue"/>
-      <text x="260" y="762" class="fc t-blue">AES-128 CBC Decrypt</text>
-      <text x="260" y="777" class="fc t-dim">same key + IV → unpad → plaintext</text>
-      <text x="260" y="790" class="fc t-dim">Practical 5 — AES Algorithm</text>
-
-      <line x1="260" y1="796" x2="260" y2="818" class="ln"/>
-
-      <!-- Final -->
-      <rect x="150" y="818" width="220" height="38" rx="7" class="node-acc"/>
-      <text x="260" y="833" class="fc t-green">✓ Original plaintext recovered</text>
-      <text x="260" y="848" class="fc t-dim">End-to-end secure message</text>
-    </svg>
-  </div>
-
-  <!-- Code explanation -->
-  <div class="section-title" style="margin-top:32px;">Code Explanation</div>
-  <div class="card" style="margin-bottom:12px;">
-    <div class="card-head">
-      <div class="card-icon">🔏</div>
-      <div>
-        <div class="card-title">SHA-256 Hashing — Practical 9</div>
-        <div class="card-subtitle">Used for password hashing and key derivation</div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon">🏗️</div>
+        <div>
+          <div class="card-title">Architecture Overview</div>
+          <div class="card-sub">Client-Server pattern using Flask + Browser</div>
+        </div>
       </div>
+      <p style="font-size:0.88rem;line-height:1.8;color:var(--dim);">
+        The <strong style="color:var(--accent)">browser (client)</strong> sends HTTP JSON requests to the
+        <strong style="color:var(--green)">Flask server (backend)</strong>. All cryptographic operations
+        happen server-side — the client only displays results.
+        SHA-256 handles authentication; AES handles message confidentiality.
+        Encryption and decryption are only accessible after a successful login.
+      </p>
     </div>
-    <pre style="background:rgba(0,0,0,0.4);border:1px solid var(--border);border-left:3px solid var(--yellow);border-radius:0 8px 8px 0;padding:14px;font-family:var(--mono);font-size:0.78rem;line-height:1.8;overflow-x:auto;color:#8fa8c8;"><span style="color:#ffe566">import</span> hashlib
 
-<span style="color:#ffe566">def</span> <span style="color:#4fffb0">sha256</span>(text):
-    <span style="color:#3a4f70"># Produces a fixed 256-bit (64 hex char) digest</span>
-    <span style="color:#ffe566">return</span> hashlib.<span style="color:#4f9fff">sha256</span>(text.<span style="color:#4f9fff">encode</span>()).<span style="color:#4f9fff">hexdigest</span>()
-
-<span style="color:#3a4f70"># Registration: store only the hash</span>
-users_db[username] = <span style="color:#4fffb0">sha256</span>(password)
-
-<span style="color:#3a4f70"># Login: hash what user typed, compare to stored hash</span>
-<span style="color:#ffe566">if</span> <span style="color:#4fffb0">sha256</span>(entered) == users_db[username]:
-    session[<span style="color:#4f9fff">"user"</span>] = username  <span style="color:#3a4f70"># grant access</span></pre>
-  </div>
-
-  <div class="card">
-    <div class="card-head">
-      <div class="card-icon">🔒</div>
-      <div>
-        <div class="card-title">AES-128 CBC — Practical 5</div>
-        <div class="card-subtitle">Symmetric encryption for messages</div>
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon">🔏</div>
+        <div>
+          <div class="card-title">SHA-256 Password Hashing <span class="algo-tag">Practical 9</span></div>
+          <div class="card-sub">Used in Register (store hash) and Login (compare hashes)</div>
+        </div>
       </div>
+      <div class="code-block">
+<span class="kw">import</span> hashlib
+
+<span class="cm"># Produces a fixed 256-bit (64 hex char) digest from any input</span>
+<span class="kw">def</span> <span class="fn">sha256</span>(text: str) -> str:
+    <span class="kw">return</span> hashlib.<span class="fn">sha256</span>(text.<span class="fn">encode</span>()).<span class="fn">hexdigest</span>()
+
+<span class="cm"># REGISTER — hash and store (never keep plain password)</span>
+users_db[username] = <span class="fn">sha256</span>(password)
+
+<span class="cm"># LOGIN — hash what user typed, compare to stored hash</span>
+<span class="kw">if</span> <span class="fn">sha256</span>(entered_pass) == users_db[username]:
+    session[<span class="st">"user"</span>] = username  <span class="cm"># ← access granted</span></div>
     </div>
-    <pre style="background:rgba(0,0,0,0.4);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:14px;font-family:var(--mono);font-size:0.78rem;line-height:1.8;overflow-x:auto;color:#8fa8c8;"><span style="color:#ffe566">from</span> Crypto.Cipher <span style="color:#ffe566">import</span> AES
-<span style="color:#ffe566">from</span> Crypto.Util.Padding <span style="color:#ffe566">import</span> pad, unpad
-<span style="color:#ffe566">import</span> os, base64, hashlib
 
-<span style="color:#ffe566">def</span> <span style="color:#4fffb0">aes_encrypt</span>(plaintext, key_str):
-    key    = hashlib.<span style="color:#4f9fff">sha256</span>(key_str.<span style="color:#4f9fff">encode</span>()).<span style="color:#4f9fff">digest</span>()[:16] <span style="color:#3a4f70"># 16-byte key</span>
-    iv     = os.<span style="color:#4f9fff">urandom</span>(16)                                  <span style="color:#3a4f70"># random IV</span>
-    cipher = AES.<span style="color:#4f9fff">new</span>(key, AES.MODE_CBC, iv)
-    ct     = cipher.<span style="color:#4f9fff">encrypt</span>(<span style="color:#4f9fff">pad</span>(plaintext.<span style="color:#4f9fff">encode</span>(), 16))
-    <span style="color:#ffe566">return</span> base64.<span style="color:#4f9fff">b64encode</span>(ct), base64.<span style="color:#4f9fff">b64encode</span>(iv)
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon">🔒</div>
+        <div>
+          <div class="card-title">AES-128 CBC Encrypt / Decrypt <span class="algo-tag">Practical 5</span></div>
+          <div class="card-sub">Symmetric encryption — session required</div>
+        </div>
+      </div>
+      <div class="code-block">
+<span class="kw">from</span> Crypto.Cipher <span class="kw">import</span> AES
+<span class="kw">from</span> Crypto.Util.Padding <span class="kw">import</span> pad, unpad
+<span class="kw">import</span> os, base64, hashlib
 
-<span style="color:#ffe566">def</span> <span style="color:#4fffb0">aes_decrypt</span>(ct_b64, iv_b64, key_str):
-    key    = hashlib.<span style="color:#4f9fff">sha256</span>(key_str.<span style="color:#4f9fff">encode</span>()).<span style="color:#4f9fff">digest</span>()[:16]
-    cipher = AES.<span style="color:#4f9fff">new</span>(key, AES.MODE_CBC, base64.<span style="color:#4f9fff">b64decode</span>(iv_b64))
-    <span style="color:#ffe566">return</span> <span style="color:#4f9fff">unpad</span>(cipher.<span style="color:#4f9fff">decrypt</span>(base64.<span style="color:#4f9fff">b64decode</span>(ct_b64)), 16).<span style="color:#4f9fff">decode</span>()</pre>
-  </div>
+<span class="kw">def</span> <span class="fn">aes_encrypt</span>(plaintext, key_str):
+    key    = hashlib.<span class="fn">sha256</span>(key_str.<span class="fn">encode</span>()).<span class="fn">digest</span>()[:16]  <span class="cm"># 16-byte key</span>
+    iv     = os.<span class="fn">urandom</span>(16)                                    <span class="cm"># random IV per message</span>
+    cipher = AES.<span class="fn">new</span>(key, AES.MODE_CBC, iv)
+    ct     = cipher.<span class="fn">encrypt</span>(<span class="fn">pad</span>(plaintext.<span class="fn">encode</span>(), 16))
+    <span class="kw">return</span> base64.<span class="fn">b64encode</span>(ct), base64.<span class="fn">b64encode</span>(iv)
 
-  <footer>FCRIT · CNS Lab · SHA-256 (Practical 9) + AES-128 (Practical 5)</footer>
-</div>
+<span class="kw">def</span> <span class="fn">aes_decrypt</span>(ct_b64, iv_b64, key_str):
+    key    = hashlib.<span class="fn">sha256</span>(key_str.<span class="fn">encode</span>()).<span class="fn">digest</span>()[:16]
+    cipher = AES.<span class="fn">new</span>(key, AES.MODE_CBC, base64.<span class="fn">b64decode</span>(iv_b64))
+    <span class="kw">return</span> <span class="fn">unpad</span>(cipher.<span class="fn">decrypt</span>(base64.<span class="fn">b64decode</span>(ct_b64)), 16).<span class="fn">decode</span>()</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon">🌐</div>
+        <div>
+          <div class="card-title">Session-based Authentication</div>
+          <div class="card-sub">Gates the encrypt/decrypt endpoints</div>
+        </div>
+      </div>
+      <div class="code-block">
+<span class="cm"># After successful login → create server-side session</span>
+session[<span class="st">"user"</span>] = username
+
+<span class="cm"># Every protected endpoint checks session before proceeding</span>
+<span class="kw">if</span> <span class="st">"user"</span> <span class="kw">not in</span> session:
+    <span class="kw">return</span> jsonify({<span class="st">"msg"</span>: <span class="st">"Not authenticated."</span>}), <span class="yw">401</span>
+
+<span class="cm"># Logout clears the session</span>
+session.<span class="fn">clear</span>()</div>
+    </div>
+
+  </div><!-- /panel-code -->
+
+</div><!-- /container -->
 
 <script>
 let lastEnc = null;
 
-/* ── pipeline highlighter ── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
 function setPipe(step) {
   for (let i = 1; i <= 4; i++) {
     const el = document.getElementById('ps' + i);
     el.classList.remove('active', 'done');
     if (i < step)  el.classList.add('done');
     if (i === step) el.classList.add('active');
-    if (i < 4) {
-      const arr = document.getElementById('pa' + i);
-      arr.classList.toggle('lit', i < step);
-    }
+    if (i < 4) document.getElementById('pa' + i).classList.toggle('lit', i < step);
   }
 }
 
-function showStatus(id, msg, ok) {
+function showSt(id, msg, ok) {
   const el = document.getElementById(id);
   el.className = 'status show ' + (ok ? 'ok' : 'err');
   el.textContent = (ok ? '✓ ' : '✗ ') + msg;
 }
 
-function copyText(id) {
-  navigator.clipboard.writeText(document.getElementById(id).textContent);
-}
+function copyEl(id) { navigator.clipboard.writeText(document.getElementById(id).textContent); }
 
-/* ── Register ── */
 async function doRegister() {
   const u = document.getElementById('r-user').value.trim();
   const p = document.getElementById('r-pass').value.trim();
-  if (!u || !p) return showStatus('r-status', 'Fill in both fields.', false);
-
-  const res = await fetch('/api/register', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({username: u, password: p})
-  });
-  const d = await res.json();
-
+  if (!u || !p) return showSt('r-status', 'Fill in both fields.', false);
+  const d = await (await fetch('/api/register', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({username:u, password:p})
+  })).json();
   if (d.ok) {
-    showStatus('r-status', d.msg, true);
+    showSt('r-status', d.msg, true);
     document.getElementById('ri-plain').textContent = p;
     document.getElementById('ri-hash').textContent  = d.hash;
     document.getElementById('r-info').classList.add('show');
-    document.getElementById('card-register').classList.remove('active-card');
-    document.getElementById('card-login').classList.add('active-card');
     setPipe(2);
-  } else {
-    showStatus('r-status', d.msg, false);
-  }
+  } else { showSt('r-status', d.msg, false); }
 }
 
-/* ── Login ── */
 async function doLogin() {
   const u = document.getElementById('l-user').value.trim();
   const p = document.getElementById('l-pass').value.trim();
-  if (!u || !p) return showStatus('l-status', 'Fill in both fields.', false);
-
-  const res = await fetch('/api/login', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({username: u, password: p})
-  });
-  const d = await res.json();
-
+  if (!u || !p) return showSt('l-status', 'Fill in both fields.', false);
+  const d = await (await fetch('/api/login', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({username:u, password:p})
+  })).json();
   if (d.ok) {
-    showStatus('l-status', d.msg, true);
+    showSt('l-status', d.msg, true);
     document.getElementById('li-entered').textContent = d.entered_hash;
     document.getElementById('li-stored').textContent  = d.stored_hash;
     document.getElementById('l-info').classList.add('show');
-    // unlock encrypt/decrypt
     document.getElementById('enc-lock').style.display = 'none';
     document.getElementById('dec-lock').style.display = 'none';
-    document.getElementById('banner').classList.add('show');
+    document.getElementById('user-badge').classList.add('show');
     document.getElementById('who-name').textContent = u;
-    document.getElementById('card-login').classList.remove('active-card');
-    document.getElementById('card-enc').classList.add('active-card');
     setPipe(3);
-  } else {
-    showStatus('l-status', d.msg, false);
-  }
+  } else { showSt('l-status', d.msg, false); }
 }
 
-/* ── Logout ── */
 async function doLogout() {
   await fetch('/api/logout', {method:'POST'});
   document.getElementById('enc-lock').style.display = 'flex';
   document.getElementById('dec-lock').style.display = 'flex';
-  document.getElementById('banner').classList.remove('show');
+  document.getElementById('user-badge').classList.remove('show');
   document.getElementById('l-info').classList.remove('show');
   document.getElementById('r-info').classList.remove('show');
   document.getElementById('e-out').style.display = 'none';
   document.getElementById('d-out').style.display = 'none';
-  document.getElementById('card-register').classList.add('active-card');
-  setPipe(1);
+  lastEnc = null; setPipe(1);
 }
 
-/* ── Encrypt ── */
 async function doEncrypt() {
   const msg = document.getElementById('e-msg').value.trim();
   const key = document.getElementById('e-key').value.trim();
-  if (!msg || !key) return showStatus('e-status', 'Message and key required.', false);
-
-  const res = await fetch('/api/encrypt', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({message: msg, key})
-  });
-  const d = await res.json();
-
+  if (!msg || !key) return showSt('e-status', 'Message and key required.', false);
+  const d = await (await fetch('/api/encrypt', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({message:msg, key})
+  })).json();
   if (d.ok) {
-    showStatus('e-status', 'Encrypted successfully!', true);
+    showSt('e-status', 'Encrypted successfully!', true);
     document.getElementById('e-ct').textContent = d.ciphertext;
     document.getElementById('e-iv').textContent = d.iv;
     document.getElementById('e-out').style.display = 'block';
-    lastEnc = d;
-    document.getElementById('card-enc').classList.remove('active-card');
-    document.getElementById('card-dec').classList.add('active-card');
+    lastEnc = {...d, key};
     setPipe(4);
-  } else {
-    showStatus('e-status', d.msg, false);
-  }
+  } else { showSt('e-status', d.msg, false); }
 }
 
-/* ── Auto-fill ── */
 function autoFill() {
   if (!lastEnc) return;
   document.getElementById('d-ct').value  = lastEnc.ciphertext;
   document.getElementById('d-iv').value  = lastEnc.iv;
-  document.getElementById('d-key').value = document.getElementById('e-key').value;
+  document.getElementById('d-key').value = lastEnc.key;
 }
 
-/* ── Decrypt ── */
 async function doDecrypt() {
   const ct  = document.getElementById('d-ct').value.trim();
   const iv  = document.getElementById('d-iv').value.trim();
   const key = document.getElementById('d-key').value.trim();
-  if (!ct || !iv || !key) return showStatus('d-status', 'All three fields required.', false);
-
-  const res = await fetch('/api/decrypt', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ciphertext: ct, iv, key})
-  });
-  const d = await res.json();
-
+  if (!ct || !iv || !key) return showSt('d-status', 'All three fields required.', false);
+  const d = await (await fetch('/api/decrypt', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ciphertext:ct, iv, key})
+  })).json();
   if (d.ok) {
-    showStatus('d-status', 'Decrypted successfully!', true);
+    showSt('d-status', 'Decrypted successfully!', true);
     document.getElementById('d-pt').textContent = d.plaintext;
     document.getElementById('d-out').style.display = 'block';
-  } else {
-    showStatus('d-status', d.msg, false);
-  }
+  } else { showSt('d-status', d.msg, false); }
 }
 </script>
 </body>
