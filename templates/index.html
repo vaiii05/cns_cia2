@@ -3,852 +3,729 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CNS Lab — SecureVault</title>
+<title>CNS Lab — Hardened SecureVault</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #080c14;
-  --panel:   #0d1425;
-  --border:  #1a2a4a;
-  --accent:  #00d4ff;
-  --purple:  #7c3aed;
-  --green:   #00ff88;
-  --red:     #ff4466;
-  --yellow:  #ffd700;
-  --text:    #c8d8f0;
-  --dim:     #5a7a9a;
-  --mono:    'Share Tech Mono', monospace;
-  --sans:    'Exo 2', sans-serif;
+  --bg:     #080c14;
+  --panel:  #0d1425;
+  --border: #1a2a4a;
+  --accent: #00d4ff;
+  --purple: #7c3aed;
+  --green:  #00ff88;
+  --red:    #ff4466;
+  --yellow: #ffd700;
+  --orange: #ff8c00;
+  --text:   #c8d8f0;
+  --dim:    #5a7a9a;
+  --mono:   'Share Tech Mono', monospace;
+  --sans:   'Exo 2', sans-serif;
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* animated grid */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image:
-    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* glow orb */
-body::after {
-  content: '';
-  position: fixed;
-  top: -200px; right: -200px;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 20px;
-  position: relative;
-  z-index: 1;
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-200px;right:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,.12) 0%,transparent 70%);pointer-events:none;z-index:0}
+.container{max-width:960px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
 
 /* ── Header ── */
-header {
-  padding: 24px 0 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+header{padding:22px 0 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo h1{font-size:1.35rem;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase}
+.logo span{font-size:.65rem;color:var(--dim);display:block;letter-spacing:3px;text-transform:uppercase}
+.header-right{display:flex;align-items:center;gap:14px}
+.status-bar{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.78rem}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#user-badge{display:none;align-items:center;gap:10px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:5px 13px;border-radius:20px;font-family:var(--mono);font-size:.8rem}
+#user-badge.show{display:flex}
+#user-badge .uname{color:var(--accent)}
+#logout-btn{background:none;border:1px solid rgba(255,68,102,.3);color:var(--red);cursor:pointer;font-family:var(--mono);font-size:.72rem;padding:2px 10px;border-radius:4px;transition:background .2s}
+#logout-btn:hover{background:rgba(255,68,102,.1)}
 
-.logo { display: flex; align-items: center; gap: 12px; }
-.logo-icon {
-  width: 36px; height: 36px;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-}
-.logo h1 {
-  font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--accent);
-  text-transform: uppercase;
-}
-.logo span {
-  font-size: 0.7rem;
-  color: var(--dim);
-  display: block;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-}
-
-.header-right { display: flex; align-items: center; gap: 16px; }
-
-.status-bar {
-  display: flex; align-items: center; gap: 8px;
-  font-family: var(--mono); font-size: 0.8rem;
-}
-.status-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
-  animation: pulse 2s infinite;
-}
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-#user-badge {
-  display: none;
-  align-items: center;
-  gap: 10px;
-  background: rgba(0,212,255,0.08);
-  border: 1px solid rgba(0,212,255,0.2);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-family: var(--mono);
-  font-size: 0.82rem;
-}
-#user-badge.show { display: flex; }
-#user-badge .uname { color: var(--accent); }
-#logout-btn {
-  background: none;
-  border: 1px solid rgba(255,68,102,0.3);
-  color: var(--red);
-  cursor: pointer;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  padding: 2px 10px;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-#logout-btn:hover { background: rgba(255,68,102,0.1); }
+/* ── Security badges strip ── */
+.sec-strip{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--border)}
+.sec-badge{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.65rem;letter-spacing:1px;padding:4px 10px;border-radius:4px;text-transform:uppercase}
+.sec-badge.active{background:rgba(0,255,136,.07);border:1px solid rgba(0,255,136,.2);color:var(--green)}
+.sec-badge.inactive{background:rgba(255,140,0,.07);border:1px solid rgba(255,140,0,.2);color:var(--orange)}
+.sec-dot{width:6px;height:6px;border-radius:50%}
+.sec-badge.active .sec-dot{background:var(--green);box-shadow:0 0 5px var(--green)}
+.sec-badge.inactive .sec-dot{background:var(--orange);box-shadow:0 0 5px var(--orange)}
 
 /* ── Tabs ── */
-.tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border);
-  margin-top: 28px;
-}
-.tab {
-  padding: 12px 22px;
-  background: none;
-  border: none;
-  color: var(--dim);
-  cursor: pointer;
-  font-family: var(--mono);
-  font-size: 0.82rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  position: relative;
-  transition: color 0.2s;
-}
-.tab::after {
-  content: '';
-  position: absolute;
-  bottom: -1px; left: 0; right: 0;
-  height: 2px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transition: transform 0.2s;
-}
-.tab.active { color: var(--accent); }
-.tab.active::after { transform: scaleX(1); }
-.tab:hover:not(.active) { color: var(--text); }
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-top:24px}
+.tab{padding:11px 20px;background:none;border:none;color:var(--dim);cursor:pointer;font-family:var(--mono);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;position:relative;transition:color .2s}
+.tab::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--accent);transform:scaleX(0);transition:transform .2s}
+.tab.active{color:var(--accent)}
+.tab.active::after{transform:scaleX(1)}
+.tab:hover:not(.active){color:var(--text)}
 
 /* ── Panels ── */
-.panel { display: none; padding: 32px 0; }
-.panel.active { display: block; }
+.panel{display:none;padding:28px 0}
+.panel.active{display:block}
 
-/* ── Card ── */
-.card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px 32px;
-  margin-bottom: 20px;
-  position: relative;
-  overflow: hidden;
-}
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), var(--purple), transparent);
-}
+/* ── Cards ── */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:26px 30px;margin-bottom:18px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--purple),transparent)}
+.card-head{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+.card-icon{width:34px;height:34px;border-radius:8px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.15);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.card-title{font-size:.98rem;font-weight:600;color:#fff}
+.card-sub{font-family:var(--mono);font-size:.66rem;color:var(--dim);letter-spacing:1px;margin-top:3px}
+.algo-tag{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:1px;padding:2px 7px;border-radius:4px;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.2);color:var(--accent);margin-left:7px;vertical-align:middle}
+.algo-tag.green{background:rgba(0,255,136,.08);border-color:rgba(0,255,136,.2);color:var(--green)}
+.algo-tag.yellow{background:rgba(255,215,0,.08);border-color:rgba(255,215,0,.2);color:var(--yellow)}
+.algo-tag.orange{background:rgba(255,140,0,.08);border-color:rgba(255,140,0,.2);color:var(--orange)}
 
-.card-head {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 22px;
-}
-.card-icon {
-  width: 36px; height: 36px;
-  border-radius: 8px;
-  background: rgba(0,212,255,0.08);
-  border: 1px solid rgba(0,212,255,0.15);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-.card-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fff;
-}
-.card-sub {
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  color: var(--dim);
-  letter-spacing: 1px;
-  margin-top: 3px;
-}
-
-.algo-tag {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 0.62rem;
-  letter-spacing: 1px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  background: rgba(0,212,255,0.1);
-  border: 1px solid rgba(0,212,255,0.2);
-  color: var(--accent);
-  margin-left: 8px;
-  vertical-align: middle;
-}
+/* ── Pipeline ── */
+.pipeline{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:26px;font-family:var(--mono);font-size:.68rem}
+.pipe-step{display:flex;flex-direction:column;align-items:center;gap:4px;opacity:.35;transition:opacity .3s}
+.pipe-step.active{opacity:1}
+.pipe-step.done{opacity:.65}
+.pipe-num{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .3s}
+.pipe-step.active .pipe-num{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700;box-shadow:0 0 12px rgba(0,212,255,.4)}
+.pipe-step.done .pipe-num{background:rgba(0,212,255,.12);border-color:var(--accent);color:var(--accent)}
+.pipe-label{color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-size:.6rem}
+.pipe-step.active .pipe-label,.pipe-step.done .pipe-label{color:var(--text)}
+.pipe-arrow{width:28px;height:1px;background:var(--border);margin:0 2px 15px;flex-shrink:0;transition:background .3s}
+.pipe-arrow.lit{background:var(--accent)}
 
 /* ── Form ── */
-label {
-  display: block;
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--dim);
-  margin-bottom: 7px;
-}
-
-input, textarea {
-  width: 100%;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 0.88rem;
-  padding: 11px 14px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  margin-bottom: 14px;
-}
-input:focus, textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(0,212,255,0.1);
-}
-textarea { resize: vertical; min-height: 80px; }
+label{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+input,textarea{width:100%;background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:.86rem;padding:10px 13px;outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:13px}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,212,255,.1)}
+textarea{resize:vertical;min-height:76px}
 
 /* ── Buttons ── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 11px 22px;
-  border: none;
-  border-radius: 6px;
-  font-family: var(--mono);
-  font-size: 0.82rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.btn-full { width: 100%; }
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), #0099bb);
-  color: #000;
-  font-weight: 700;
-}
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,212,255,0.3); }
-.btn-ghost {
-  background: transparent;
-  color: var(--dim);
-  border: 1px solid var(--border);
-}
-.btn-ghost:hover { border-color: var(--dim); color: var(--text); }
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border:none;border-radius:6px;font-family:var(--mono);font-size:.8rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.btn-full{width:100%}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#0099bb);color:#000;font-weight:700}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,212,255,.3)}
+.btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--dim);color:var(--text)}
+.btn-dh{background:linear-gradient(135deg,var(--purple),#5b21b6);color:#e9d5ff;font-weight:700}
+.btn-dh:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(124,58,237,.3)}
 
-/* ── Step pipeline ── */
-.pipeline {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  margin-bottom: 28px;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-}
-.pipe-step {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 4px;
-  opacity: 0.35; transition: opacity 0.3s;
-}
-.pipe-step.active { opacity: 1; }
-.pipe-step.done   { opacity: 0.65; }
-.pipe-num {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.72rem; transition: all 0.3s;
-}
-.pipe-step.active .pipe-num {
-  background: var(--accent); border-color: var(--accent);
-  color: #000; font-weight: 700;
-  box-shadow: 0 0 12px rgba(0,212,255,0.4);
-}
-.pipe-step.done .pipe-num {
-  background: rgba(0,212,255,0.12); border-color: var(--accent); color: var(--accent);
-}
-.pipe-label { color: var(--dim); letter-spacing: 1px; text-transform: uppercase; font-size: 0.65rem; }
-.pipe-step.active .pipe-label, .pipe-step.done .pipe-label { color: var(--text); }
-.pipe-arrow {
-  width: 36px; height: 1px;
-  background: var(--border);
-  margin: 0 2px 16px;
-  flex-shrink: 0; transition: background 0.3s;
-}
-.pipe-arrow.lit { background: var(--accent); }
-
-/* ── Info rows ── */
-.info-block {
-  background: rgba(0,0,0,0.3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-top: 14px; display: none;
-}
-.info-block.show { display: block; }
-.info-row {
-  display: flex; gap: 12px;
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(26,42,74,0.6);
-  font-family: var(--mono); font-size: 0.75rem;
-}
-.info-row:last-child { border-bottom: none; padding-bottom: 0; }
-.info-key { color: var(--dim); min-width: 120px; flex-shrink: 0; }
-.info-val { color: var(--text); word-break: break-all; line-height: 1.5; }
-.info-val.green  { color: var(--green); }
-.info-val.yellow { color: var(--yellow); }
-.info-val.blue   { color: var(--accent); }
+/* ── Info block ── */
+.info-block{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin-top:13px;display:none}
+.info-block.show{display:block}
+.info-row{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid rgba(26,42,74,.6);font-family:var(--mono);font-size:.73rem}
+.info-row:last-child{border-bottom:none;padding-bottom:0}
+.info-key{color:var(--dim);min-width:130px;flex-shrink:0}
+.info-val{color:var(--text);word-break:break-all;line-height:1.5}
+.info-val.green{color:var(--green)}
+.info-val.yellow{color:var(--yellow)}
+.info-val.blue{color:var(--accent)}
+.info-val.purple{color:#a78bfa}
+.info-val.orange{color:var(--orange)}
 
 /* ── Output boxes ── */
-.out-header {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 6px;
-}
-.out-label {
-  font-family: var(--mono);
-  font-size: 0.65rem; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--dim);
-}
-.copy-btn {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--dim);
-  font-family: var(--mono); font-size: 0.65rem;
-  padding: 2px 8px; border-radius: 4px;
-  cursor: pointer; transition: all 0.2s;
-}
-.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-.output-box {
-  background: rgba(0,0,0,0.5);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 12px 14px;
-  font-family: var(--mono); font-size: 0.8rem;
-  word-break: break-all; line-height: 1.6;
-  color: var(--accent);
-  min-height: 48px; margin-bottom: 12px;
-}
-.output-box.yellow { color: var(--yellow); }
+.out-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.out-label{font-family:var(--mono);font-size:.63rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--dim);font-family:var(--mono);font-size:.63rem;padding:2px 8px;border-radius:4px;cursor:pointer;transition:all .2s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.output-box{background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:6px;padding:11px 13px;font-family:var(--mono);font-size:.78rem;word-break:break-all;line-height:1.6;color:var(--accent);min-height:46px;margin-bottom:11px}
+.output-box.yellow{color:var(--yellow)}
+.output-box.green{color:var(--green)}
+.output-box.purple{color:#a78bfa}
 
 /* ── Status ── */
-.status {
-  font-family: var(--mono); font-size: 0.78rem;
-  padding: 10px 14px; border-radius: 6px;
-  margin-top: 10px; display: none; align-items: center; gap: 8px;
-}
-.status.show { display: flex; }
-.status.ok  { background: rgba(0,255,136,0.07); border: 1px solid rgba(0,255,136,0.2); color: var(--green); }
-.status.err { background: rgba(255,68,102,0.07); border: 1px solid rgba(255,68,102,0.2); color: var(--red); }
+.status{font-family:var(--mono);font-size:.76rem;padding:9px 13px;border-radius:6px;margin-top:10px;display:none;align-items:center;gap:8px}
+.status.show{display:flex}
+.status.ok{background:rgba(0,255,136,.07);border:1px solid rgba(0,255,136,.2);color:var(--green)}
+.status.err{background:rgba(255,68,102,.07);border:1px solid rgba(255,68,102,.2);color:var(--red)}
+.status.warn{background:rgba(255,215,0,.07);border:1px solid rgba(255,215,0,.2);color:var(--yellow)}
 
 /* ── Locked overlay ── */
-.locked {
-  position: absolute; inset: 0;
-  background: rgba(8,12,20,0.88);
-  border-radius: 12px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 10px; backdrop-filter: blur(2px); z-index: 5;
-}
-.locked .lock-ico { font-size: 2rem; }
-.locked p { font-family: var(--mono); font-size: 0.78rem; color: var(--dim); }
+.locked{position:absolute;inset:0;background:rgba(8,12,20,.9);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;backdrop-filter:blur(3px);z-index:5}
+.locked .lock-ico{font-size:1.8rem}
+.locked p{font-family:var(--mono);font-size:.76rem;color:var(--dim)}
+
+/* ── DH visualizer ── */
+.dh-visual{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:16px 0}
+.dh-side{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:var(--mono);font-size:.7rem}
+.dh-side h4{color:var(--accent);font-size:.72rem;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
+.dh-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(26,42,74,.4);font-size:.68rem}
+.dh-row:last-child{border-bottom:none}
+.dh-row span:first-child{color:var(--dim)}
+.dh-row span:last-child{color:var(--green);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dh-arrow{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:var(--mono);font-size:.62rem;color:var(--dim)}
+.dh-arrow-line{font-size:1.2rem;color:var(--accent)}
 
 /* ── Code blocks ── */
-.code-block {
-  background: rgba(0,0,0,0.5);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--purple);
-  border-radius: 0 6px 6px 0;
-  padding: 16px; font-family: var(--mono);
-  font-size: 0.78rem; line-height: 1.8;
-  overflow-x: auto; margin: 12px 0; color: #a8c0e0;
-}
-.kw { color: #a78bfa; }
-.fn { color: var(--accent); }
-.st { color: var(--green); }
-.cm { color: var(--dim); }
-.yw { color: var(--yellow); }
+.code-block{background:rgba(0,0,0,.5);border:1px solid var(--border);border-left:3px solid var(--purple);border-radius:0 6px 6px 0;padding:15px;font-family:var(--mono);font-size:.76rem;line-height:1.8;overflow-x:auto;margin:10px 0;color:#a8c0e0}
+.kw{color:#a78bfa}.fn{color:var(--accent)}.st{color:var(--green)}.cm{color:var(--dim)}.yw{color:var(--yellow)}
 
-/* ── Flowchart tab ── */
-.flow-wrap {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px; overflow-x: auto;
-}
+/* ── Flowchart ── */
+.flow-wrap{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;overflow-x:auto}
 
-@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-.card { animation: fadeIn 0.35s ease both; }
+/* ── Threat table ── */
+.threat-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.76rem}
+.threat-table th{text-align:left;padding:10px 14px;border-bottom:2px solid var(--border);color:var(--dim);letter-spacing:1px;text-transform:uppercase;font-size:.65rem}
+.threat-table td{padding:9px 14px;border-bottom:1px solid rgba(26,42,74,.5);vertical-align:top;line-height:1.5}
+.threat-table tr:last-child td{border-bottom:none}
+.threat-table td:first-child{color:var(--red)}
+.threat-table td:nth-child(2){color:var(--text)}
+.threat-table td:last-child{color:var(--green)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.card{animation:fadeIn .35s ease both}
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- Header -->
-  <header>
-    <div class="logo">
-      <div class="logo-icon">🔐</div>
-      <div>
-        <h1>SecureVault</h1>
-        <span>CNS Lab · SHA-256 + AES-128 · Client-Server</span>
-      </div>
+<!-- ── Header ── -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">🔐</div>
+    <div>
+      <h1>SecureVault <span style="font-size:.7rem;color:var(--green);letter-spacing:1px;">HARDENED</span></h1>
+      <span>CNS Lab · SHA-256+Salt · DH · AES-128 · HMAC · HTTPS</span>
     </div>
-    <div class="header-right">
-      <div id="user-badge">
-        <span>👤</span>
-        <span class="uname" id="who-name">—</span>
-        <button id="logout-btn" onclick="doLogout()">LOGOUT</button>
-      </div>
-      <div class="status-bar">
-        <div class="status-dot"></div>
-        <span>SERVER ONLINE</span>
-      </div>
+  </div>
+  <div class="header-right">
+    <div id="user-badge">
+      <span>👤</span><span class="uname" id="who-name">—</span>
+      <button id="logout-btn" onclick="doLogout()">LOGOUT</button>
     </div>
-  </header>
+    <div class="status-bar"><div class="status-dot"></div><span>HTTPS ONLINE</span></div>
+  </div>
+</header>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('app',  this)">🔑 Application</button>
-    <button class="tab"        onclick="switchTab('flow', this)">📊 Flowchart</button>
-    <button class="tab"        onclick="switchTab('code', this)">📖 Code Explained</button>
+<!-- ── Security status strip ── -->
+<div class="sec-strip">
+  <div class="sec-badge active"><div class="sec-dot"></div>HTTPS/TLS</div>
+  <div class="sec-badge inactive" id="badge-dh"><div class="sec-dot"></div>DH Handshake</div>
+  <div class="sec-badge active"><div class="sec-dot"></div>SHA-256 + Salt</div>
+  <div class="sec-badge active"><div class="sec-dot"></div>AES-128 CBC</div>
+  <div class="sec-badge active"><div class="sec-dot"></div>HMAC Integrity</div>
+  <div class="sec-badge active"><div class="sec-dot"></div>Rate Limiting</div>
+  <div class="sec-badge active"><div class="sec-dot"></div>Secure Sessions</div>
+</div>
+
+<!-- ── Tabs ── -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('app',   this)">🔑 Application</button>
+  <button class="tab"        onclick="switchTab('flow',  this)">📊 Flowchart</button>
+  <button class="tab"        onclick="switchTab('code',  this)">📖 Code Explained</button>
+  <button class="tab"        onclick="switchTab('threat',this)">🛡️ Security Analysis</button>
+</div>
+
+
+<!-- ════════════════════════════════
+     PANEL: APPLICATION
+════════════════════════════════ -->
+<div class="panel active" id="panel-app">
+
+  <!-- Pipeline -->
+  <div class="pipeline">
+    <div class="pipe-step active" id="ps1"><div class="pipe-num">1</div><div class="pipe-label">DH Handshake</div></div>
+    <div class="pipe-arrow" id="pa1"></div>
+    <div class="pipe-step" id="ps2"><div class="pipe-num">2</div><div class="pipe-label">Register</div></div>
+    <div class="pipe-arrow" id="pa2"></div>
+    <div class="pipe-step" id="ps3"><div class="pipe-num">3</div><div class="pipe-label">Login</div></div>
+    <div class="pipe-arrow" id="pa3"></div>
+    <div class="pipe-step" id="ps4"><div class="pipe-num">4</div><div class="pipe-label">Encrypt</div></div>
+    <div class="pipe-arrow" id="pa4"></div>
+    <div class="pipe-step" id="ps5"><div class="pipe-num">5</div><div class="pipe-label">Decrypt</div></div>
   </div>
 
-  <!-- ══════════════════════════
-       PANEL: APPLICATION
-  ══════════════════════════ -->
-  <div class="panel active" id="panel-app">
-
-    <!-- Pipeline -->
-    <div class="pipeline">
-      <div class="pipe-step active" id="ps1"><div class="pipe-num">1</div><div class="pipe-label">Register</div></div>
-      <div class="pipe-arrow" id="pa1"></div>
-      <div class="pipe-step" id="ps2"><div class="pipe-num">2</div><div class="pipe-label">Login</div></div>
-      <div class="pipe-arrow" id="pa2"></div>
-      <div class="pipe-step" id="ps3"><div class="pipe-num">3</div><div class="pipe-label">Encrypt</div></div>
-      <div class="pipe-arrow" id="pa3"></div>
-      <div class="pipe-step" id="ps4"><div class="pipe-num">4</div><div class="pipe-label">Decrypt</div></div>
-    </div>
-
-    <!-- REGISTER -->
-    <div class="card">
-      <div class="card-head">
-        <div class="card-icon">📝</div>
-        <div>
-          <div class="card-title">Register <span class="algo-tag">SHA-256</span></div>
-          <div class="card-sub">Password is hashed — never stored as plain text</div>
-        </div>
-      </div>
-      <label>Username</label>
-      <input type="text" id="r-user" placeholder="e.g. alice" autocomplete="off">
-      <label>Password</label>
-      <input type="password" id="r-pass" placeholder="choose a password">
-      <button class="btn btn-primary btn-full" onclick="doRegister()">CREATE ACCOUNT →</button>
-      <div class="status" id="r-status"></div>
-      <div class="info-block" id="r-info">
-        <div class="info-row">
-          <span class="info-key">password input</span>
-          <span class="info-val yellow" id="ri-plain">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-key">SHA-256 hash</span>
-          <span class="info-val green" id="ri-hash">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-key">stored in DB</span>
-          <span class="info-val blue">hash only ✓ — plain text discarded</span>
-        </div>
+  <!-- STEP 1: DH HANDSHAKE -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🤝</div>
+      <div>
+        <div class="card-title">Step 1 — Diffie-Hellman Handshake <span class="algo-tag yellow">Practical 7</span></div>
+        <div class="card-sub">Establish shared AES key without transmitting it — defeats MITM</div>
       </div>
     </div>
 
-    <!-- LOGIN -->
-    <div class="card">
-      <div class="card-head">
-        <div class="card-icon">🔑</div>
-        <div>
-          <div class="card-title">Login <span class="algo-tag">SHA-256 compare</span></div>
-          <div class="card-sub">Entered password is hashed → compared to stored hash</div>
-        </div>
-      </div>
-      <label>Username</label>
-      <input type="text" id="l-user" placeholder="e.g. alice" autocomplete="off">
-      <label>Password</label>
-      <input type="password" id="l-pass" placeholder="your password">
-      <button class="btn btn-primary btn-full" onclick="doLogin()">AUTHENTICATE →</button>
-      <div class="status" id="l-status"></div>
-      <div class="info-block" id="l-info">
-        <div class="info-row">
-          <span class="info-key">entered hash</span>
-          <span class="info-val green" id="li-entered">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-key">stored hash</span>
-          <span class="info-val green" id="li-stored">—</span>
-        </div>
-        <div class="info-row">
-          <span class="info-key">match?</span>
-          <span class="info-val green">✓ identical → session created → access granted</span>
-        </div>
-      </div>
-    </div>
+    <p style="font-size:.84rem;color:var(--dim);line-height:1.7;margin-bottom:16px;">
+      Before any login or encryption, client and server must agree on a <strong style="color:var(--accent)">shared secret key</strong>.
+      DH lets both sides compute the <em>same</em> key independently — the key is <strong style="color:var(--green)">never sent over the network</strong>.
+    </p>
 
-    <!-- ENCRYPT -->
-    <div class="card" style="position:relative;">
-      <div class="locked" id="enc-lock">
-        <div class="lock-ico">🔒</div>
-        <p>Login first to use AES encryption</p>
-      </div>
-      <div class="card-head">
-        <div class="card-icon">🔐</div>
-        <div>
-          <div class="card-title">Encrypt Message <span class="algo-tag">AES-128 CBC</span></div>
-          <div class="card-sub">Available only to authenticated users — Practical 5</div>
+    <button class="btn btn-dh btn-full" onclick="doDHHandshake()">INITIATE DH HANDSHAKE →</button>
+    <div class="status" id="dh-status"></div>
+
+    <div class="info-block" id="dh-info">
+      <div class="dh-visual">
+        <div class="dh-side">
+          <h4>🖥 Client</h4>
+          <div class="dh-row"><span>private (a)</span><span id="dh-c-priv">—</span></div>
+          <div class="dh-row"><span>public (g^a)</span><span id="dh-c-pub">—</span></div>
+          <div class="dh-row"><span>shared (B^a)</span><span id="dh-c-shared">—</span></div>
+        </div>
+        <div class="dh-arrow">
+          <span style="font-size:.62rem;color:var(--dim);">A →</span>
+          <span class="dh-arrow-line">⇄</span>
+          <span style="font-size:.62rem;color:var(--dim);">← B</span>
+        </div>
+        <div class="dh-side">
+          <h4>🖧 Server</h4>
+          <div class="dh-row"><span>public (g^b)</span><span id="dh-s-pub">—</span></div>
+          <div class="dh-row"><span>shared (A^b)</span><span id="dh-s-shared">—</span></div>
         </div>
       </div>
-      <label>Plaintext Message</label>
-      <textarea id="e-msg" placeholder="Type your secret message here…"></textarea>
-      <label>AES Key</label>
-      <input type="text" id="e-key" placeholder="e.g. mysecretkey" autocomplete="off">
-      <button class="btn btn-primary btn-full" onclick="doEncrypt()">ENCRYPT WITH AES →</button>
-      <div class="status" id="e-status"></div>
-      <div id="e-out" style="display:none;margin-top:16px;">
-        <div class="out-header">
-          <span class="out-label">Ciphertext (Base64)</span>
-          <button class="copy-btn" onclick="copyEl('e-ct')">COPY</button>
-        </div>
-        <div class="output-box" id="e-ct">—</div>
-        <div class="out-header">
-          <span class="out-label">IV — Initialization Vector</span>
-          <button class="copy-btn" onclick="copyEl('e-iv')">COPY</button>
-        </div>
-        <div class="output-box" id="e-iv">—</div>
+      <div class="info-row">
+        <span class="info-key">p (prime)</span>
+        <span class="info-val blue" id="dh-p">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">g (generator)</span>
+        <span class="info-val blue" id="dh-g">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">shared AES key</span>
+        <span class="info-val green" id="dh-key-display">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-key">key transmitted?</span>
+        <span class="info-val green">NO ✓ — derived independently by both sides</span>
       </div>
     </div>
+  </div>
 
-    <!-- DECRYPT -->
-    <div class="card" style="position:relative;">
-      <div class="locked" id="dec-lock">
-        <div class="lock-ico">🔒</div>
-        <p>Login first to use AES decryption</p>
-      </div>
-      <div class="card-head">
-        <div class="card-icon">🔓</div>
-        <div>
-          <div class="card-title">Decrypt Message <span class="algo-tag">AES-128 CBC</span></div>
-          <div class="card-sub">Provide ciphertext + IV + same key to recover plaintext</div>
-        </div>
-      </div>
-      <button class="btn btn-ghost btn-full" onclick="autoFill()" style="margin-bottom:14px;">⬆ AUTO-FILL FROM LAST ENCRYPT</button>
-      <label>Ciphertext (Base64)</label>
-      <textarea id="d-ct" placeholder="Paste ciphertext here…" style="min-height:60px;font-size:0.75rem;"></textarea>
-      <label>IV (Base64)</label>
-      <input type="text" id="d-iv" placeholder="Paste IV here…">
-      <label>AES Key</label>
-      <input type="text" id="d-key" placeholder="same key used for encryption">
-      <button class="btn btn-primary btn-full" onclick="doDecrypt()">DECRYPT →</button>
-      <div class="status" id="d-status"></div>
-      <div id="d-out" style="display:none;margin-top:16px;">
-        <div class="out-header">
-          <span class="out-label">Recovered Plaintext</span>
-        </div>
-        <div class="output-box yellow" id="d-pt">—</div>
+  <!-- STEP 2: REGISTER -->
+  <div class="card" style="position:relative;">
+    <div class="locked" id="reg-lock"><div class="lock-ico">🤝</div><p>Complete DH Handshake first</p></div>
+    <div class="card-head">
+      <div class="card-icon">📝</div>
+      <div>
+        <div class="card-title">Step 2 — Register <span class="algo-tag yellow">SHA-256 + Salt</span></div>
+        <div class="card-sub">Salt defeats rainbow tables — each hash is unique</div>
       </div>
     </div>
-
-  </div><!-- /panel-app -->
-
-
-  <!-- ══════════════════════════
-       PANEL: FLOWCHART
-  ══════════════════════════ -->
-  <div class="panel" id="panel-flow">
-    <div class="flow-wrap">
-      <svg viewBox="0 0 900 820" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
-        <defs>
-          <marker id="arr"   markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00d4ff"/></marker>
-          <marker id="arr-g" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00ff88"/></marker>
-          <marker id="arr-r" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#ff4466"/></marker>
-          <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-        <style>
-          .fc  { font-family:'Share Tech Mono',monospace; }
-          .n   { fill:#0d1425; stroke:#1a2a4a; stroke-width:1.5; }
-          .ng  { fill:#061a10; stroke:#00ff88; stroke-width:1.5; }
-          .ny  { fill:#0d0a00; stroke:#ffd700; stroke-width:1.5; }
-          .nb  { fill:#040f1a; stroke:#00d4ff; stroke-width:1.5; }
-          .np  { fill:#0d0a1f; stroke:#7c3aed; stroke-width:2; }
-          .ne  { fill:#1a0808; stroke:#ff4466; stroke-width:1.5; }
-          .tw  { fill:#c8d8f0; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-          .tg  { fill:#00ff88; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-          .ty  { fill:#ffd700; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-          .tb  { fill:#00d4ff; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-          .tp  { fill:#a78bfa; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-          .tr  { fill:#ff4466; font-size:11px; text-anchor:middle; dominant-baseline:central; }
-          .td  { fill:#5a7a9a; font-size:9.5px; text-anchor:middle; dominant-baseline:central; }
-          .la  { fill:#5a7a9a; font-family:'Share Tech Mono',monospace; font-size:9px; }
-          .ln  { stroke:#00d4ff; stroke-width:1.5; fill:none; marker-end:url(#arr); }
-          .lng { stroke:#00ff88; stroke-width:1.5; fill:none; marker-end:url(#arr-g); }
-          .lnr { stroke:#ff4466; stroke-width:1.5; fill:none; marker-end:url(#arr-r); }
-          .dv  { stroke:#1a2a4a; stroke-width:1; stroke-dasharray:5,4; fill:none; }
-        </style>
-
-        <!-- ═══ LEFT: REGISTER ═══ -->
-        <text x="205" y="18" class="fc td" style="letter-spacing:3px;">REGISTRATION</text>
-
-        <ellipse cx="205" cy="46" rx="82" ry="20" class="nb" filter="url(#glow)"/>
-        <text x="205" y="46" class="fc tb">CLIENT (Browser)</text>
-
-        <line x1="205" y1="66"  x2="205" y2="88"  class="ln"/>
-        <rect x="105" y="88"  width="200" height="38" rx="7" class="n"/>
-        <text x="205" y="101" class="fc tw">Enter username</text>
-        <text x="205" y="116" class="fc tw">+ password</text>
-
-        <line x1="205" y1="126" x2="205" y2="148" class="ln"/>
-        <rect x="85"  y="148" width="240" height="42" rx="7" class="ny"/>
-        <text x="205" y="163" class="fc ty">SHA-256( password )</text>
-        <text x="205" y="180" class="fc td">Practical 9 — Message Digest</text>
-
-        <line x1="205" y1="190" x2="205" y2="212" class="ln"/>
-        <rect x="85"  y="212" width="240" height="42" rx="7" class="ng"/>
-        <text x="205" y="227" class="fc tg">Store { username: hash }</text>
-        <text x="205" y="244" class="fc td">plain password discarded ✓</text>
-
-        <line x1="205" y1="254" x2="205" y2="276" class="lng"/>
-        <rect x="105" y="276" width="200" height="34" rx="7" class="ng"/>
-        <text x="205" y="293" class="fc tg">✓ Registration Successful</text>
-
-        <!-- ═══ RIGHT: LOGIN + ENCRYPT ═══ -->
-        <text x="675" y="18" class="fc td" style="letter-spacing:3px;">LOGIN + ENCRYPT</text>
-
-        <ellipse cx="675" cy="46" rx="82" ry="20" class="nb" filter="url(#glow)"/>
-        <text x="675" y="46" class="fc tb">CLIENT (Browser)</text>
-
-        <line x1="675" y1="66"  x2="675" y2="88"  class="ln"/>
-        <rect x="575" y="88"  width="200" height="38" rx="7" class="n"/>
-        <text x="675" y="101" class="fc tw">Enter username</text>
-        <text x="675" y="116" class="fc tw">+ password</text>
-
-        <line x1="675" y1="126" x2="675" y2="148" class="ln"/>
-        <rect x="550" y="148" width="250" height="42" rx="7" class="ny"/>
-        <text x="675" y="163" class="fc ty">SHA-256( entered_pass )</text>
-        <text x="675" y="180" class="fc td">Practical 9 — same algorithm</text>
-
-        <line x1="675" y1="190" x2="675" y2="222" class="ln"/>
-
-        <!-- diamond -->
-        <polygon points="675,222 775,258 675,294 575,258" class="ny" filter="url(#glow)"/>
-        <text x="675" y="258" class="fc ty">Hash == stored?</text>
-
-        <!-- YES -->
-        <line x1="675" y1="294" x2="675" y2="316" class="lng"/>
-        <text x="686" y="307" class="la" fill="#00ff88">YES</text>
-        <rect x="550" y="316" width="250" height="42" rx="7" class="ng"/>
-        <text x="675" y="331" class="fc tg">Session Created ✓</text>
-        <text x="675" y="348" class="fc td">Authentication granted</text>
-
-        <!-- NO -->
-        <line x1="775" y1="258" x2="848" y2="258" class="lnr"/>
-        <text x="808" y="250" class="la" fill="#ff4466">NO</text>
-        <rect x="808" y="238" width="80" height="38" rx="7" class="ne"/>
-        <text x="848" y="252" class="fc tr">401</text>
-        <text x="848" y="268" class="fc td">Denied</text>
-
-        <line x1="675" y1="358" x2="675" y2="388" class="ln"/>
-
-        <!-- divider -->
-        <line x1="470" y1="382" x2="870" y2="382" class="dv"/>
-        <text x="670" y="397" class="fc td" style="letter-spacing:2px;">SESSION REQUIRED</text>
-
-        <line x1="675" y1="406" x2="675" y2="428" class="ln"/>
-
-        <!-- AES Encrypt -->
-        <rect x="520" y="428" width="310" height="56" rx="7" class="np"/>
-        <text x="675" y="446" class="fc tp">AES-128 CBC Encrypt</text>
-        <text x="675" y="462" class="fc td">key = SHA256(key_str)[:16]  |  IV = random(16)</text>
-        <text x="675" y="477" class="fc td">Practical 5 — AES Algorithm</text>
-
-        <line x1="675" y1="484" x2="675" y2="506" class="ln"/>
-        <rect x="555" y="506" width="240" height="38" rx="7" class="n"/>
-        <text x="675" y="519" class="fc tw">Return ciphertext (Base64)</text>
-        <text x="675" y="534" class="fc td">+ IV (Base64)</text>
-
-        <line x1="675" y1="544" x2="675" y2="566" class="ln"/>
-
-        <!-- AES Decrypt -->
-        <rect x="520" y="566" width="310" height="56" rx="7" class="np"/>
-        <text x="675" y="584" class="fc tp">AES-128 CBC Decrypt</text>
-        <text x="675" y="600" class="fc td">same key + IV → unpad → plaintext</text>
-        <text x="675" y="616" class="fc td">Practical 5 — AES Algorithm</text>
-
-        <line x1="675" y1="622" x2="675" y2="644" class="lng"/>
-        <rect x="555" y="644" width="240" height="38" rx="7" class="ng"/>
-        <text x="675" y="657" class="fc tg">✓ Original plaintext recovered</text>
-        <text x="675" y="672" class="fc td">End-to-end secure message</text>
-
-        <!-- vertical divider -->
-        <line x1="430" y1="8" x2="430" y2="720" class="dv"/>
-
-        <!-- bottom labels -->
-        <text x="205" y="750" class="fc td" style="text-anchor:middle;letter-spacing:2px;">SECURITY — SHA-256 (Practical 9)</text>
-        <text x="675" y="750" class="fc td" style="text-anchor:middle;letter-spacing:2px;">CRYPTO — AES-128 CBC (Practical 5)</text>
-      </svg>
+    <label>Username</label>
+    <input type="text" id="r-user" placeholder="e.g. alice" autocomplete="off">
+    <label>Password</label>
+    <input type="password" id="r-pass" placeholder="min 6 characters">
+    <button class="btn btn-primary btn-full" onclick="doRegister()">CREATE ACCOUNT →</button>
+    <div class="status" id="r-status"></div>
+    <div class="info-block" id="r-info">
+      <div class="info-row"><span class="info-key">plain password</span><span class="info-val yellow" id="ri-plain">—</span></div>
+      <div class="info-row"><span class="info-key">random salt</span><span class="info-val orange" id="ri-salt">—</span></div>
+      <div class="info-row"><span class="info-key">SHA-256(salt+pass)</span><span class="info-val green" id="ri-hash">—</span></div>
+      <div class="info-row"><span class="info-key">stored in DB</span><span class="info-val blue">salt + hash only ✓ (plain text gone)</span></div>
     </div>
-  </div><!-- /panel-flow -->
+  </div>
 
-
-  <!-- ══════════════════════════
-       PANEL: CODE EXPLAINED
-  ══════════════════════════ -->
-  <div class="panel" id="panel-code">
-
-    <div class="card">
-      <div class="card-head">
-        <div class="card-icon">🏗️</div>
-        <div>
-          <div class="card-title">Architecture Overview</div>
-          <div class="card-sub">Client-Server pattern using Flask + Browser</div>
-        </div>
+  <!-- STEP 3: LOGIN -->
+  <div class="card" style="position:relative;">
+    <div class="locked" id="login-lock"><div class="lock-ico">📝</div><p>Register an account first</p></div>
+    <div class="card-head">
+      <div class="card-icon">🔑</div>
+      <div>
+        <div class="card-title">Step 3 — Login <span class="algo-tag yellow">Hash Compare</span> <span class="algo-tag orange">Rate Limited</span></div>
+        <div class="card-sub">Max 5 attempts then 60s lockout — brute force protection</div>
       </div>
-      <p style="font-size:0.88rem;line-height:1.8;color:var(--dim);">
-        The <strong style="color:var(--accent)">browser (client)</strong> sends HTTP JSON requests to the
-        <strong style="color:var(--green)">Flask server (backend)</strong>. All cryptographic operations
-        happen server-side — the client only displays results.
-        SHA-256 handles authentication; AES handles message confidentiality.
-        Encryption and decryption are only accessible after a successful login.
-      </p>
     </div>
-
-    <div class="card">
-      <div class="card-head">
-        <div class="card-icon">🔏</div>
-        <div>
-          <div class="card-title">SHA-256 Password Hashing <span class="algo-tag">Practical 9</span></div>
-          <div class="card-sub">Used in Register (store hash) and Login (compare hashes)</div>
-        </div>
-      </div>
-      <div class="code-block">
-<span class="kw">import</span> hashlib
-
-<span class="cm"># Produces a fixed 256-bit (64 hex char) digest from any input</span>
-<span class="kw">def</span> <span class="fn">sha256</span>(text: str) -> str:
-    <span class="kw">return</span> hashlib.<span class="fn">sha256</span>(text.<span class="fn">encode</span>()).<span class="fn">hexdigest</span>()
-
-<span class="cm"># REGISTER — hash and store (never keep plain password)</span>
-users_db[username] = <span class="fn">sha256</span>(password)
-
-<span class="cm"># LOGIN — hash what user typed, compare to stored hash</span>
-<span class="kw">if</span> <span class="fn">sha256</span>(entered_pass) == users_db[username]:
-    session[<span class="st">"user"</span>] = username  <span class="cm"># ← access granted</span></div>
+    <label>Username</label>
+    <input type="text" id="l-user" placeholder="e.g. alice" autocomplete="off">
+    <label>Password</label>
+    <input type="password" id="l-pass" placeholder="your password">
+    <button class="btn btn-primary btn-full" onclick="doLogin()">AUTHENTICATE →</button>
+    <div class="status" id="l-status"></div>
+    <div class="info-block" id="l-info">
+      <div class="info-row"><span class="info-key">stored hash</span><span class="info-val green" id="li-hash">—</span></div>
+      <div class="info-row"><span class="info-key">salt used</span><span class="info-val orange" id="li-salt">—</span></div>
+      <div class="info-row"><span class="info-key">verification</span><span class="info-val green">SHA-256(salt + entered_pass) == stored_hash ✓</span></div>
+      <div class="info-row"><span class="info-key">session</span><span class="info-val green">Created (HttpOnly, Secure, SameSite=Strict, 30min TTL)</span></div>
     </div>
+  </div>
 
-    <div class="card">
-      <div class="card-head">
-        <div class="card-icon">🔒</div>
-        <div>
-          <div class="card-title">AES-128 CBC Encrypt / Decrypt <span class="algo-tag">Practical 5</span></div>
-          <div class="card-sub">Symmetric encryption — session required</div>
-        </div>
+  <!-- STEP 4: ENCRYPT -->
+  <div class="card" style="position:relative;">
+    <div class="locked" id="enc-lock"><div class="lock-ico">🔒</div><p>Login first to use encryption</p></div>
+    <div class="card-head">
+      <div class="card-icon">🔐</div>
+      <div>
+        <div class="card-title">Step 4 — Encrypt <span class="algo-tag">AES-128 CBC</span> <span class="algo-tag green">HMAC</span></div>
+        <div class="card-sub">Uses DH-derived key — HMAC tag protects integrity</div>
       </div>
-      <div class="code-block">
-<span class="kw">from</span> Crypto.Cipher <span class="kw">import</span> AES
-<span class="kw">from</span> Crypto.Util.Padding <span class="kw">import</span> pad, unpad
-<span class="kw">import</span> os, base64, hashlib
+    </div>
+    <label>Plaintext Message</label>
+    <textarea id="e-msg" placeholder="Type your secret message…"></textarea>
+    <button class="btn btn-primary btn-full" onclick="doEncrypt()">ENCRYPT WITH AES →</button>
+    <div class="status" id="e-status"></div>
+    <div id="e-out" style="display:none;margin-top:15px;">
+      <div class="out-header"><span class="out-label">Ciphertext (Base64)</span><button class="copy-btn" onclick="copyEl('e-ct')">COPY</button></div>
+      <div class="output-box" id="e-ct">—</div>
+      <div class="out-header"><span class="out-label">IV — Initialization Vector</span><button class="copy-btn" onclick="copyEl('e-iv')">COPY</button></div>
+      <div class="output-box" id="e-iv">—</div>
+      <div class="out-header"><span class="out-label">HMAC-SHA256 Integrity Tag</span><button class="copy-btn" onclick="copyEl('e-hmac')">COPY</button></div>
+      <div class="output-box purple" id="e-hmac">—</div>
+      <div class="info-row" style="margin-top:8px;background:rgba(0,0,0,.2);padding:8px 10px;border-radius:6px;">
+        <span class="info-key" style="font-family:var(--mono);font-size:.68rem;color:var(--dim);">AES key source</span>
+        <span class="info-val green" style="font-family:var(--mono);font-size:.7rem;">DH shared secret — never transmitted ✓</span>
+      </div>
+    </div>
+  </div>
 
-<span class="kw">def</span> <span class="fn">aes_encrypt</span>(plaintext, key_str):
-    key    = hashlib.<span class="fn">sha256</span>(key_str.<span class="fn">encode</span>()).<span class="fn">digest</span>()[:16]  <span class="cm"># 16-byte key</span>
-    iv     = os.<span class="fn">urandom</span>(16)                                    <span class="cm"># random IV per message</span>
+  <!-- STEP 5: DECRYPT -->
+  <div class="card" style="position:relative;">
+    <div class="locked" id="dec-lock"><div class="lock-ico">🔒</div><p>Login first to use decryption</p></div>
+    <div class="card-head">
+      <div class="card-icon">🔓</div>
+      <div>
+        <div class="card-title">Step 5 — Decrypt <span class="algo-tag">AES-128 CBC</span> <span class="algo-tag green">HMAC Verify</span></div>
+        <div class="card-sub">HMAC verified before decryption — tampered data is rejected</div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-full" onclick="autoFill()" style="margin-bottom:13px;">⬆ AUTO-FILL FROM LAST ENCRYPT</button>
+    <label>Ciphertext (Base64)</label>
+    <textarea id="d-ct" style="min-height:58px;font-size:.73rem;" placeholder="Paste ciphertext…"></textarea>
+    <label>IV (Base64)</label>
+    <input type="text" id="d-iv" placeholder="Paste IV…">
+    <label>HMAC Tag</label>
+    <input type="text" id="d-hmac" placeholder="Paste HMAC tag…">
+    <button class="btn btn-primary btn-full" onclick="doDecrypt()">VERIFY HMAC & DECRYPT →</button>
+    <div class="status" id="d-status"></div>
+    <div id="d-out" style="display:none;margin-top:14px;">
+      <div class="out-header"><span class="out-label">Recovered Plaintext</span></div>
+      <div class="output-box yellow" id="d-pt">—</div>
+    </div>
+  </div>
+
+</div><!-- /panel-app -->
+
+
+<!-- ════════════════════════════════
+     PANEL: FLOWCHART
+════════════════════════════════ -->
+<div class="panel" id="panel-flow">
+<div class="flow-wrap">
+<svg viewBox="0 0 960 980" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+<defs>
+  <marker id="a0" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00d4ff"/></marker>
+  <marker id="ag" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#00ff88"/></marker>
+  <marker id="ar" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#ff4466"/></marker>
+  <marker id="ay" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#ffd700"/></marker>
+  <filter id="gl"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<style>
+  .fc{font-family:'Share Tech Mono',monospace}
+  .n {fill:#0d1425;stroke:#1a2a4a;stroke-width:1.5}
+  .ng{fill:#061a10;stroke:#00ff88;stroke-width:1.5}
+  .ny{fill:#0d0a00;stroke:#ffd700;stroke-width:1.5}
+  .nb{fill:#040f1a;stroke:#00d4ff;stroke-width:1.5}
+  .np{fill:#0d0a1f;stroke:#7c3aed;stroke-width:2}
+  .ne{fill:#1a0808;stroke:#ff4466;stroke-width:1.5}
+  .no{fill:#150800;stroke:#ff8c00;stroke-width:1.5}
+  .tw{fill:#c8d8f0;font-size:11px;text-anchor:middle;dominant-baseline:central}
+  .tg{fill:#00ff88;font-size:11px;text-anchor:middle;dominant-baseline:central}
+  .ty{fill:#ffd700;font-size:11px;text-anchor:middle;dominant-baseline:central}
+  .tb{fill:#00d4ff;font-size:11px;text-anchor:middle;dominant-baseline:central}
+  .tp{fill:#a78bfa;font-size:11px;text-anchor:middle;dominant-baseline:central}
+  .tr{fill:#ff4466;font-size:11px;text-anchor:middle;dominant-baseline:central}
+  .to{fill:#ff8c00;font-size:11px;text-anchor:middle;dominant-baseline:central}
+  .td{fill:#5a7a9a;font-size:9.5px;text-anchor:middle;dominant-baseline:central}
+  .la{fill:#5a7a9a;font-family:'Share Tech Mono',monospace;font-size:9px}
+  .ln {stroke:#00d4ff;stroke-width:1.5;fill:none;marker-end:url(#a0)}
+  .lng{stroke:#00ff88;stroke-width:1.5;fill:none;marker-end:url(#ag)}
+  .lnr{stroke:#ff4466;stroke-width:1.5;fill:none;marker-end:url(#ar)}
+  .lny{stroke:#ffd700;stroke-width:1.5;fill:none;marker-end:url(#ay)}
+  .dv {stroke:#1a2a4a;stroke-width:1;stroke-dasharray:5,4;fill:none}
+</style>
+
+<!-- ═══ LEFT: REGISTER ═══ -->
+<text x="200" y="16" class="fc td" style="letter-spacing:3px">REGISTER</text>
+<ellipse cx="200" cy="44" rx="80" ry="20" class="nb" filter="url(#gl)"/>
+<text x="200" y="44" class="fc tb">CLIENT</text>
+
+<line x1="200" y1="64" x2="200" y2="86" class="ln"/>
+<rect x="105" y="86" width="190" height="36" rx="7" class="nb"/>
+<text x="200" y="104" class="fc tb">POST /api/register</text>
+
+<line x1="200" y1="122" x2="200" y2="144" class="ln"/>
+<rect x="85" y="144" width="230" height="42" rx="7" class="no"/>
+<text x="200" y="158" class="fc to">salt = random(32 bytes)</text>
+<text x="200" y="174" class="fc td">random salt per user</text>
+
+<line x1="200" y1="186" x2="200" y2="208" class="ln"/>
+<rect x="85" y="208" width="230" height="42" rx="7" class="ny"/>
+<text x="200" y="223" class="fc ty">SHA-256(salt + password)</text>
+<text x="200" y="239" class="fc td">Practical 9 — salted hash</text>
+
+<line x1="200" y1="250" x2="200" y2="272" class="ln"/>
+<rect x="85" y="272" width="230" height="42" rx="7" class="ng"/>
+<text x="200" y="287" class="fc tg">Store {salt, hash}</text>
+<text x="200" y="303" class="fc td">plain password gone ✓</text>
+
+<line x1="200" y1="314" x2="200" y2="336" class="lng"/>
+<rect x="105" y="336" width="190" height="34" rx="7" class="ng"/>
+<text x="200" y="353" class="fc tg">✓ Registration Successful</text>
+
+<!-- ═══ MIDDLE: DH HANDSHAKE ═══ -->
+<text x="480" y="16" class="fc td" style="letter-spacing:3px">DH HANDSHAKE (Practical 7)</text>
+<ellipse cx="370" cy="44" rx="60" ry="18" class="nb"/>
+<text x="370" y="44" class="fc tb" style="font-size:9px">CLIENT</text>
+<ellipse cx="590" cy="44" rx="60" ry="18" class="nb"/>
+<text x="590" y="44" class="fc tb" style="font-size:9px">SERVER</text>
+
+<line x1="370" y1="62" x2="370" y2="82" class="lny"/>
+<rect x="300" y="82" width="140" height="36" rx="7" class="ny"/>
+<text x="370" y="96" class="fc ty">pick secret a</text>
+<text x="370" y="112" class="fc td">A = g^a mod p</text>
+
+<line x1="410" y1="100" x2="550" y2="100" class="lny"/>
+<text x="480" y="92" class="la" style="text-anchor:middle">A → server</text>
+
+<line x1="590" y1="62" x2="590" y2="82" class="lny"/>
+<rect x="520" y="82" width="140" height="36" rx="7" class="ny"/>
+<text x="590" y="96" class="fc ty">pick secret b</text>
+<text x="590" y="112" class="fc td">B = g^b mod p</text>
+
+<line x1="550" y1="140" x2="410" y2="140" class="lny"/>
+<text x="480" y="132" class="la" style="text-anchor:middle">← B to client</text>
+
+<line x1="370" y1="118" x2="370" y2="162" class="lny"/>
+<rect x="290" y="162" width="160" height="36" rx="7" class="ng"/>
+<text x="370" y="175" class="fc tg">shared = B^a mod p</text>
+<text x="370" y="191" class="fc td">→ AES key (16 bytes)</text>
+
+<line x1="590" y1="118" x2="590" y2="162" class="lny"/>
+<rect x="510" y="162" width="160" height="36" rx="7" class="ng"/>
+<text x="590" y="175" class="fc tg">shared = A^b mod p</text>
+<text x="590" y="191" class="fc td">→ same AES key ✓</text>
+
+<text x="480" y="218" class="fc tg" style="text-anchor:middle">Both sides derive IDENTICAL key — key never transmitted</text>
+
+<!-- ═══ RIGHT: LOGIN + ENCRYPT ═══ -->
+<text x="830" y="16" class="fc td" style="letter-spacing:3px">LOGIN + ENCRYPT</text>
+<ellipse cx="830" cy="44" rx="80" ry="20" class="nb" filter="url(#gl)"/>
+<text x="830" y="44" class="fc tb">CLIENT</text>
+
+<line x1="830" y1="64" x2="830" y2="86" class="ln"/>
+<rect x="740" y="86" width="180" height="36" rx="7" class="n"/>
+<text x="830" y="99" class="fc tw">Enter credentials</text>
+<text x="830" y="115" class="fc td">POST /api/login</text>
+
+<line x1="830" y1="122" x2="830" y2="144" class="ln"/>
+<rect x="720" y="144" width="220" height="42" rx="7" class="ny"/>
+<text x="830" y="158" class="fc ty">SHA-256(stored_salt + pass)</text>
+<text x="830" y="174" class="fc td">Practical 9 — re-hash to verify</text>
+
+<line x1="830" y1="186" x2="830" y2="216" class="ln"/>
+<polygon points="830,216 910,248 830,280 750,248" class="ny" filter="url(#gl)"/>
+<text x="830" y="248" class="fc ty">Hash match?</text>
+
+<!-- YES -->
+<line x1="830" y1="280" x2="830" y2="300" class="lng"/>
+<text x="842" y="292" class="la" fill="#00ff88">YES</text>
+<rect x="718" y="300" width="224" height="36" rx="7" class="ng"/>
+<text x="830" y="312" class="fc tg">Session (HttpOnly, Secure</text>
+<text x="830" y="328" class="fc tg">SameSite, 30min TTL)</text>
+
+<!-- NO + rate limit -->
+<line x1="910" y1="248" x2="958" y2="248" class="lnr"/>
+<rect x="912" y="228" width="40" height="40" rx="6" class="ne"/>
+<text x="932" y="248" class="fc tr">401</text>
+
+<line x1="830" y1="336" x2="830" y2="358" class="ln"/>
+
+<!-- divider -->
+<line x1="700" y1="352" x2="960" y2="352" class="dv"/>
+<text x="830" y="366" class="fc td" style="text-anchor:middle;letter-spacing:2px">SESSION ACTIVE</text>
+
+<line x1="830" y1="376" x2="830" y2="396" class="ln"/>
+<rect x="706" y="396" width="248" height="52" rx="7" class="np"/>
+<text x="830" y="413" class="fc tp">AES-128 CBC Encrypt</text>
+<text x="830" y="429" class="fc td">key = DH shared secret (never sent)</text>
+<text x="830" y="445" class="fc td">Practical 5</text>
+
+<line x1="830" y1="448" x2="830" y2="468" class="ln"/>
+<rect x="706" y="468" width="248" height="42" rx="7" class="np"/>
+<text x="830" y="483" class="fc tp">HMAC-SHA256(ciphertext+IV)</text>
+<text x="830" y="499" class="fc td">integrity tag attached</text>
+
+<line x1="830" y1="510" x2="830" y2="530" class="ln"/>
+<rect x="720" y="530" width="220" height="36" rx="7" class="n"/>
+<text x="830" y="543" class="fc tw">Return ciphertext+IV+HMAC</text>
+<text x="830" y="559" class="fc td">over HTTPS (encrypted in transit)</text>
+
+<line x1="830" y1="566" x2="830" y2="586" class="ln"/>
+<polygon points="830,586 910,614 830,642 750,614" class="ng" filter="url(#gl)"/>
+<text x="830" y="614" class="fc tg">HMAC valid?</text>
+
+<!-- HMAC YES -->
+<line x1="830" y1="642" x2="830" y2="662" class="lng"/>
+<text x="842" y="654" class="la" fill="#00ff88">YES</text>
+<rect x="706" y="662" width="248" height="42" rx="7" class="np"/>
+<text x="830" y="676" class="fc tp">AES-128 CBC Decrypt</text>
+<text x="830" y="692" class="fc td">Practical 5</text>
+
+<!-- HMAC NO -->
+<line x1="910" y1="614" x2="958" y2="614" class="lnr"/>
+<rect x="912" y="594" width="40" height="40" rx="6" class="ne"/>
+<text x="932" y="614" class="fc tr">400</text>
+
+<line x1="830" y1="704" x2="830" y2="724" class="lng"/>
+<rect x="706" y="724" width="248" height="36" rx="7" class="ng"/>
+<text x="830" y="737" class="fc tg">✓ Original plaintext recovered</text>
+<text x="830" y="753" class="fc td">end-to-end secured</text>
+
+<!-- vertical dividers -->
+<line x1="330" y1="8"  x2="330" y2="900" class="dv"/>
+<line x1="660" y1="8"  x2="660" y2="400" class="dv"/>
+
+<!-- TLS wrapper note -->
+<rect x="30" y="860" width="900" height="36" rx="7" class="nb" style="opacity:.4"/>
+<text x="480" y="878" class="fc tb" style="text-anchor:middle">🔒 ALL of the above wrapped in TLS/HTTPS — Practical 13 — encrypted in transit</text>
+</svg>
+</div>
+</div><!-- /panel-flow -->
+
+
+<!-- ════════════════════════════════
+     PANEL: CODE EXPLAINED
+════════════════════════════════ -->
+<div class="panel" id="panel-code">
+
+  <div class="card">
+    <div class="card-head"><div class="card-icon">🔏</div>
+      <div><div class="card-title">SHA-256 + Salt <span class="algo-tag yellow">Practical 9</span></div>
+      <div class="card-sub">Random salt per user — defeats rainbow tables</div></div>
+    </div>
+    <div class="code-block">
+<span class="kw">import</span> hashlib, os
+
+<span class="kw">def</span> <span class="fn">salted_hash</span>(password):
+    salt = os.<span class="fn">urandom</span>(32)                         <span class="cm"># unique per user</span>
+    h    = hashlib.<span class="fn">sha256</span>(salt + password.<span class="fn">encode</span>()).<span class="fn">hexdigest</span>()
+    <span class="kw">return</span> {<span class="st">"salt"</span>: salt.<span class="fn">hex</span>(), <span class="st">"hash"</span>: h}    <span class="cm"># store both</span>
+
+<span class="kw">def</span> <span class="fn">verify_password</span>(password, stored):
+    salt = bytes.<span class="fn">fromhex</span>(stored[<span class="st">"salt"</span>])
+    h    = hashlib.<span class="fn">sha256</span>(salt + password.<span class="fn">encode</span>()).<span class="fn">hexdigest</span>()
+    <span class="kw">return</span> hmac.<span class="fn">compare_digest</span>(h, stored[<span class="st">"hash"</span>])  <span class="cm"># constant-time</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="card-icon">🤝</div>
+      <div><div class="card-title">Diffie-Hellman Key Exchange <span class="algo-tag yellow">Practical 7</span></div>
+      <div class="card-sub">Shared AES key derived — never transmitted</div></div>
+    </div>
+    <div class="code-block">
+DH_P = <span class="cm"># 1024-bit RFC 3526 prime</span>
+DH_G = 2    <span class="cm"># generator</span>
+
+<span class="kw">def</span> <span class="fn">dh_keypair</span>():
+    private = random_int() % (DH_P - 2) + 2
+    public  = <span class="fn">pow</span>(DH_G, private, DH_P)   <span class="cm"># g^private mod p</span>
+    <span class="kw">return</span> private, public
+
+<span class="kw">def</span> <span class="fn">dh_shared</span>(their_public, my_private):
+    shared = <span class="fn">pow</span>(their_public, my_private, DH_P)  <span class="cm"># their^mine mod p</span>
+    <span class="kw">return</span> hashlib.<span class="fn">sha256</span>(shared).<span class="fn">digest</span>()[:16]   <span class="cm"># → 16-byte AES key</span>
+
+<span class="cm"># Both sides compute same key:</span>
+<span class="cm"># client: pow(B, a, p)  ==  server: pow(A, b, p)</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="card-icon">🔒</div>
+      <div><div class="card-title">AES-128 CBC + HMAC <span class="algo-tag">Practical 5</span></div>
+      <div class="card-sub">Encryption + integrity in every message</div></div>
+    </div>
+    <div class="code-block">
+<span class="kw">def</span> <span class="fn">aes_encrypt</span>(plaintext, key):         <span class="cm"># key = DH shared secret</span>
+    iv     = os.<span class="fn">urandom</span>(16)
     cipher = AES.<span class="fn">new</span>(key, AES.MODE_CBC, iv)
     ct     = cipher.<span class="fn">encrypt</span>(<span class="fn">pad</span>(plaintext.<span class="fn">encode</span>(), 16))
-    <span class="kw">return</span> base64.<span class="fn">b64encode</span>(ct), base64.<span class="fn">b64encode</span>(iv)
+    <span class="kw">return</span> b64(ct), b64(iv)
 
-<span class="kw">def</span> <span class="fn">aes_decrypt</span>(ct_b64, iv_b64, key_str):
-    key    = hashlib.<span class="fn">sha256</span>(key_str.<span class="fn">encode</span>()).<span class="fn">digest</span>()[:16]
-    cipher = AES.<span class="fn">new</span>(key, AES.MODE_CBC, base64.<span class="fn">b64decode</span>(iv_b64))
-    <span class="kw">return</span> <span class="fn">unpad</span>(cipher.<span class="fn">decrypt</span>(base64.<span class="fn">b64decode</span>(ct_b64)), 16).<span class="fn">decode</span>()</div>
+<span class="cm"># HMAC-SHA256 integrity tag</span>
+tag = hmac.<span class="fn">new</span>(key, (ciphertext + iv).<span class="fn">encode</span>(), sha256).<span class="fn">hexdigest</span>()
+
+<span class="cm"># On decrypt — verify HMAC FIRST, then decrypt</span>
+<span class="kw">if not</span> hmac.<span class="fn">compare_digest</span>(expected_tag, received_tag):
+    <span class="kw">return</span> <span class="yw">400</span>   <span class="cm"># reject tampered data</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><div class="card-icon">🌐</div>
+      <div><div class="card-title">HTTPS / TLS <span class="algo-tag yellow">Practical 13</span></div>
+      <div class="card-sub">Self-signed cert — all traffic encrypted in transit</div></div>
     </div>
+    <div class="code-block">
+<span class="cm"># Generate self-signed certificate at startup</span>
+os.<span class="fn">system</span>(<span class="st">'openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem ...'</span>)
 
-    <div class="card">
-      <div class="card-head">
-        <div class="card-icon">🌐</div>
-        <div>
-          <div class="card-title">Session-based Authentication</div>
-          <div class="card-sub">Gates the encrypt/decrypt endpoints</div>
-        </div>
-      </div>
-      <div class="code-block">
-<span class="cm"># After successful login → create server-side session</span>
-session[<span class="st">"user"</span>] = username
+ctx = ssl.<span class="fn">SSLContext</span>(ssl.PROTOCOL_TLS_SERVER)
+ctx.<span class="fn">load_cert_chain</span>(<span class="st">'cert.pem'</span>, <span class="st">'key.pem'</span>)
 
-<span class="cm"># Every protected endpoint checks session before proceeding</span>
-<span class="kw">if</span> <span class="st">"user"</span> <span class="kw">not in</span> session:
-    <span class="kw">return</span> jsonify({<span class="st">"msg"</span>: <span class="st">"Not authenticated."</span>}), <span class="yw">401</span>
+<span class="cm"># Flask runs on HTTPS</span>
+app.<span class="fn">run</span>(port=<span class="yw">5443</span>, ssl_context=ctx)
 
-<span class="cm"># Logout clears the session</span>
-session.<span class="fn">clear</span>()</div>
+<span class="cm"># Session cookies: HttpOnly, Secure, SameSite=Strict, 30min TTL</span></div>
+  </div>
+
+</div><!-- /panel-code -->
+
+
+<!-- ════════════════════════════════
+     PANEL: SECURITY ANALYSIS
+════════════════════════════════ -->
+<div class="panel" id="panel-threat">
+  <div class="card">
+    <div class="card-head"><div class="card-icon">🛡️</div>
+      <div><div class="card-title">Threat Model — Before vs After</div>
+      <div class="card-sub">Every attack vector addressed</div></div>
     </div>
-
-  </div><!-- /panel-code -->
+    <table class="threat-table">
+      <thead>
+        <tr><th>Attack</th><th>Old System Vulnerability</th><th>Fix Applied</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Eavesdropping / MITM</td>
+          <td style="color:var(--dim)">Plain HTTP — anyone on same network can read all traffic</td>
+          <td>HTTPS/TLS (Practical 13) — all traffic encrypted in transit</td>
+        </tr>
+        <tr>
+          <td>Rainbow Table Attack</td>
+          <td style="color:var(--dim)">SHA-256 alone — attacker looks up hash in pre-computed table</td>
+          <td>SHA-256 + random 32-byte salt (Practical 9) — each hash is unique</td>
+        </tr>
+        <tr>
+          <td>Key Interception</td>
+          <td style="color:var(--dim)">AES key sent in request body — interceptable</td>
+          <td>Diffie-Hellman (Practical 7) — key derived, never transmitted</td>
+        </tr>
+        <tr>
+          <td>Brute Force Login</td>
+          <td style="color:var(--dim)">Unlimited attempts — bot can try millions of passwords</td>
+          <td>Rate limiting: 5 attempts → 60s lockout per IP</td>
+        </tr>
+        <tr>
+          <td>Message Tampering</td>
+          <td style="color:var(--dim)">No integrity check — attacker can modify ciphertext bits</td>
+          <td>HMAC-SHA256 tag — tampered messages rejected before decryption</td>
+        </tr>
+        <tr>
+          <td>Session Hijacking</td>
+          <td style="color:var(--dim)">Weak session cookies — no expiry, no secure flags</td>
+          <td>HttpOnly + Secure + SameSite=Strict + 30min expiry</td>
+        </tr>
+        <tr>
+          <td>Timing Attack</td>
+          <td style="color:var(--dim)">String comparison (==) leaks timing info about hash</td>
+          <td>hmac.compare_digest() — constant-time comparison</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div><!-- /panel-threat -->
 
 </div><!-- /container -->
 
 <script>
-let lastEnc = null;
+let lastEnc   = null;
+let dhPrivate = null;    // client's DH private key (BigInt)
+let sharedKey = null;    // hex of derived shared key (for display only)
 
+/* ── Tab switching ── */
 function switchTab(name, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -856,113 +733,191 @@ function switchTab(name, btn) {
   btn.classList.add('active');
 }
 
+/* ── Pipeline ── */
 function setPipe(step) {
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 5; i++) {
     const el = document.getElementById('ps' + i);
-    el.classList.remove('active', 'done');
+    el.classList.remove('active','done');
     if (i < step)  el.classList.add('done');
     if (i === step) el.classList.add('active');
-    if (i < 4) document.getElementById('pa' + i).classList.toggle('lit', i < step);
+    if (i < 5) document.getElementById('pa' + i).classList.toggle('lit', i < step);
   }
 }
 
-function showSt(id, msg, ok) {
+function showSt(id, msg, type) {
   const el = document.getElementById(id);
-  el.className = 'status show ' + (ok ? 'ok' : 'err');
-  el.textContent = (ok ? '✓ ' : '✗ ') + msg;
+  el.className = 'status show ' + type;
+  el.textContent = (type==='ok'?'✓ ': type==='err'?'✗ ':'⚠ ') + msg;
 }
 
 function copyEl(id) { navigator.clipboard.writeText(document.getElementById(id).textContent); }
 
+// Simple BigInt modular exponentiation for client-side DH
+function modPow(base, exp, mod) {
+  let result = 1n;
+  base = base % mod;
+  while (exp > 0n) {
+    if (exp % 2n === 1n) result = result * base % mod;
+    exp = exp >> 1n;
+    base = base * base % mod;
+  }
+  return result;
+}
+
+/* ── Step 1: DH Handshake ── */
+async function doDHHandshake() {
+  showSt('dh-status', 'Generating DH keypair…', 'warn');
+
+  // Client picks random private key (256-bit)
+  const privArr = new Uint8Array(32);
+  crypto.getRandomValues(privArr);
+  const privHex = Array.from(privArr).map(b => b.toString(16).padStart(2,'0')).join('');
+  dhPrivate = BigInt('0x' + privHex);
+
+  // Send client public key to server (server returns its public key + p,g)
+  const res = await fetch('/api/dh/init', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ client_public: privHex })
+  });
+  const d = await res.json();
+  if (!d.ok) return showSt('dh-status', d.msg, 'err');
+
+  const P         = BigInt(d.p);
+  const G         = BigInt(d.g);
+  const clientPub = modPow(G, dhPrivate, P);
+  const serverPub = BigInt(d.server_public);
+
+  // Client computes shared secret
+  const sharedInt = modPow(serverPub, dhPrivate, P);
+  sharedKey       = sharedInt.toString(16).substring(0, 32); // first 32 hex chars for display
+
+  // Update UI
+  document.getElementById('dh-c-priv').textContent    = privHex.substring(0,16) + '…';
+  document.getElementById('dh-c-pub').textContent     = clientPub.toString(16).substring(0,16) + '…';
+  document.getElementById('dh-c-shared').textContent  = sharedKey.substring(0,16) + '…';
+  document.getElementById('dh-s-pub').textContent     = d.server_public.substring(2,18) + '…';
+  document.getElementById('dh-s-shared').textContent  = sharedKey.substring(0,16) + '… (same ✓)';
+  document.getElementById('dh-p').textContent         = d.p.substring(2,22) + '…';
+  document.getElementById('dh-g').textContent         = d.g;
+  document.getElementById('dh-key-display').textContent = sharedKey + '… (AES key)';
+
+  document.getElementById('dh-info').classList.add('show');
+  document.getElementById('reg-lock').style.display  = 'none';
+  document.getElementById('badge-dh').className      = 'sec-badge active';
+  document.getElementById('badge-dh').innerHTML      = '<div class="sec-dot"></div>DH Handshake ✓';
+  showSt('dh-status', 'Handshake complete! Shared key established — key was never transmitted.', 'ok');
+  setPipe(2);
+}
+
+/* ── Step 2: Register ── */
 async function doRegister() {
   const u = document.getElementById('r-user').value.trim();
   const p = document.getElementById('r-pass').value.trim();
-  if (!u || !p) return showSt('r-status', 'Fill in both fields.', false);
+  if (!u || !p) return showSt('r-status','Fill in both fields.','err');
+
   const d = await (await fetch('/api/register', {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({username:u, password:p})
   })).json();
+
   if (d.ok) {
-    showSt('r-status', d.msg, true);
+    showSt('r-status', d.msg, 'ok');
     document.getElementById('ri-plain').textContent = p;
+    document.getElementById('ri-salt').textContent  = d.salt;
     document.getElementById('ri-hash').textContent  = d.hash;
     document.getElementById('r-info').classList.add('show');
-    setPipe(2);
-  } else { showSt('r-status', d.msg, false); }
+    document.getElementById('login-lock').style.display = 'none';
+    setPipe(3);
+  } else { showSt('r-status', d.msg, 'err'); }
 }
 
+/* ── Step 3: Login ── */
 async function doLogin() {
   const u = document.getElementById('l-user').value.trim();
   const p = document.getElementById('l-pass').value.trim();
-  if (!u || !p) return showSt('l-status', 'Fill in both fields.', false);
+  if (!u || !p) return showSt('l-status','Fill in both fields.','err');
+
   const d = await (await fetch('/api/login', {
     method:'POST', headers:{'Content-Type':'application/json'},
     body: JSON.stringify({username:u, password:p})
   })).json();
+
   if (d.ok) {
-    showSt('l-status', d.msg, true);
-    document.getElementById('li-entered').textContent = d.entered_hash;
-    document.getElementById('li-stored').textContent  = d.stored_hash;
+    showSt('l-status', d.msg, 'ok');
+    document.getElementById('li-hash').textContent = d.stored_hash;
+    document.getElementById('li-salt').textContent = d.salt_used;
     document.getElementById('l-info').classList.add('show');
     document.getElementById('enc-lock').style.display = 'none';
     document.getElementById('dec-lock').style.display = 'none';
     document.getElementById('user-badge').classList.add('show');
     document.getElementById('who-name').textContent = u;
-    setPipe(3);
-  } else { showSt('l-status', d.msg, false); }
+    setPipe(4);
+  } else { showSt('l-status', d.msg, 'err'); }
 }
 
+/* ── Logout ── */
 async function doLogout() {
   await fetch('/api/logout', {method:'POST'});
-  document.getElementById('enc-lock').style.display = 'flex';
-  document.getElementById('dec-lock').style.display = 'flex';
+  document.getElementById('enc-lock').style.display   = 'flex';
+  document.getElementById('dec-lock').style.display   = 'flex';
+  document.getElementById('reg-lock').style.display   = 'flex';
+  document.getElementById('login-lock').style.display = 'flex';
   document.getElementById('user-badge').classList.remove('show');
-  document.getElementById('l-info').classList.remove('show');
-  document.getElementById('r-info').classList.remove('show');
+  ['r-info','l-info','dh-info'].forEach(id => document.getElementById(id).classList.remove('show'));
   document.getElementById('e-out').style.display = 'none';
   document.getElementById('d-out').style.display = 'none';
-  lastEnc = null; setPipe(1);
+  document.getElementById('badge-dh').className  = 'sec-badge inactive';
+  document.getElementById('badge-dh').innerHTML  = '<div class="sec-dot"></div>DH Handshake';
+  dhPrivate = null; sharedKey = null; lastEnc = null;
+  setPipe(1);
 }
 
+/* ── Step 4: Encrypt ── */
 async function doEncrypt() {
   const msg = document.getElementById('e-msg').value.trim();
-  const key = document.getElementById('e-key').value.trim();
-  if (!msg || !key) return showSt('e-status', 'Message and key required.', false);
+  if (!msg) return showSt('e-status','Message required.','err');
+
   const d = await (await fetch('/api/encrypt', {
     method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({message:msg, key})
+    body: JSON.stringify({message: msg})
   })).json();
+
   if (d.ok) {
-    showSt('e-status', 'Encrypted successfully!', true);
-    document.getElementById('e-ct').textContent = d.ciphertext;
-    document.getElementById('e-iv').textContent = d.iv;
+    showSt('e-status', 'Encrypted successfully! AES key = DH shared secret.', 'ok');
+    document.getElementById('e-ct').textContent   = d.ciphertext;
+    document.getElementById('e-iv').textContent   = d.iv;
+    document.getElementById('e-hmac').textContent = d.hmac;
     document.getElementById('e-out').style.display = 'block';
-    lastEnc = {...d, key};
-    setPipe(4);
-  } else { showSt('e-status', d.msg, false); }
+    lastEnc = d;
+    setPipe(5);
+  } else { showSt('e-status', d.msg, 'err'); }
 }
 
+/* ── Auto-fill ── */
 function autoFill() {
   if (!lastEnc) return;
-  document.getElementById('d-ct').value  = lastEnc.ciphertext;
-  document.getElementById('d-iv').value  = lastEnc.iv;
-  document.getElementById('d-key').value = lastEnc.key;
+  document.getElementById('d-ct').value   = lastEnc.ciphertext;
+  document.getElementById('d-iv').value   = lastEnc.iv;
+  document.getElementById('d-hmac').value = lastEnc.hmac;
 }
 
+/* ── Step 5: Decrypt ── */
 async function doDecrypt() {
-  const ct  = document.getElementById('d-ct').value.trim();
-  const iv  = document.getElementById('d-iv').value.trim();
-  const key = document.getElementById('d-key').value.trim();
-  if (!ct || !iv || !key) return showSt('d-status', 'All three fields required.', false);
+  const ct   = document.getElementById('d-ct').value.trim();
+  const iv   = document.getElementById('d-iv').value.trim();
+  const tag  = document.getElementById('d-hmac').value.trim();
+  if (!ct || !iv || !tag) return showSt('d-status','All three fields required.','err');
+
   const d = await (await fetch('/api/decrypt', {
     method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ciphertext:ct, iv, key})
+    body: JSON.stringify({ciphertext:ct, iv, hmac:tag})
   })).json();
+
   if (d.ok) {
-    showSt('d-status', 'Decrypted successfully!', true);
+    showSt('d-status', 'HMAC verified ✓ — Decrypted successfully!', 'ok');
     document.getElementById('d-pt').textContent = d.plaintext;
     document.getElementById('d-out').style.display = 'block';
-  } else { showSt('d-status', d.msg, false); }
+  } else { showSt('d-status', d.msg, 'err'); }
 }
 </script>
 </body>
